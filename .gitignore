@@ -1,0 +1,11 @@
+#ide
+.idea
+.vscode
+
+# vendor
+node_modules/
+
+# dist
+dist/
+
+tsconfig.tsbuildinfo
