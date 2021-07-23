@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "build": "rimraf ./dist && bili",
+    "test": "npm run test:clear && npm run test:unit",
     "test:clear": "jest --clearCache",
     "test:unit": "jest",
     "test:ext": "jest --collect-coverage",
