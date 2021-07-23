@@ -18,8 +18,28 @@ export function isNull(value: any) {
   return value === null;
 }
 
+export function isDefined(value: any) {
+  return value !== undefined;
+}
+
 export function isUndefined(value: any) {
   return value === undefined;
+}
+
+export function isNone(value: any) {
+  return value === undefined || value === null;
+}
+
+export function isNotNone(value: any) {
+  return value !== undefined && value !== null;
+}
+
+export function eq(reference: any, value: any) {
+  return reference === value;
+}
+
+export function ne(reference: any, value: any) {
+  return reference !== value;
 }
 
 export function min(minimum: number, value: any) {
@@ -56,4 +76,12 @@ export function minLength(length: number, value: any) {
 
 export function maxLength(length: number, value: any) {
   return value?.length <= length;
+}
+
+export function strictLength(length: number, value: any) {
+  return value?.length === length;
+}
+
+export function lengthBetween(minimum: number, maximum: number, value: any) {
+  return minimum <= value?.length && value?.length <= maximum;
 }
