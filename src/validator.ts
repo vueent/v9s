@@ -118,7 +118,7 @@ export class Validator {
   }
 
   public between(minimum: number, maximum: number, message?: Message, modifier?: Modifier): Validator {
-    return this.use(rules.lt.bind(undefined, minimum, maximum), message, modifier);
+    return this.use(rules.between.bind(undefined, minimum, maximum), message, modifier);
   }
 
   public minLength(length: number, message?: Message, modifier?: Modifier): Validator {
