@@ -1,24 +1,26 @@
 {
-  "baseUrl": ".",
-  "target": "es2020",
-  "module": "esnext",
-  "strict": true,
-  "importHelpers": true,
-  "moduleResolution": "node",
-  "experimentalDecorators": true,
-  "emitDecoratorMetadata": true,
-  "skipLibCheck": true,
-  "esModuleInterop": true,
-  "allowSyntheticDefaultImports": true,
-  "sourceMap": true,
-  "declaration": true,
-  "declarationMap": true,
-  "resolveJsonModule": true,
-  "noStrictGenericChecks": true,
-  "paths": {
-    "@/*": ["src"]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "target": "es2020",
+    "module": "esnext",
+    "strict": true,
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "resolveJsonModule": true,
+    "noStrictGenericChecks": true,
+    "paths": {
+      "@/*": ["src"]
+    },
+    "lib": ["es2020"]
   },
-  "lib": ["es2020"],
   "include": ["src/**/*.ts", "tests/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
