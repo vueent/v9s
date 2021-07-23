@@ -1,6 +1,11 @@
 #ide
 .idea
 .vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # vendor
 node_modules/
@@ -8,4 +13,14 @@ node_modules/
 # dist
 dist/
 
-tsconfig.tsbuildinfo
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# tests
+/coverage
+/packages/*/coverage
+
