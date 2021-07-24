@@ -4,7 +4,7 @@ const configuration: Configuration = {
   banner: true,
   input: 'src/index.ts',
   output: {
-    dir: 'dist',
+    dir: 'lib',
     format: ['es', 'cjs'],
     sourceMap: true
   },

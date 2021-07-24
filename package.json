@@ -2,9 +2,9 @@
   "name": "v9s",
   "version": "0.1.0",
   "description": "Typescript-based validations",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "files": [
-    "dist"
+    "lib"
   ],
   "scripts": {
     "build": "rimraf ./dist && bili",
@@ -26,8 +26,8 @@
   "devDependencies": {
     "@types/jest": "^26.0.24",
     "@types/node": "^14.17.5",
-    "@typescript-eslint/eslint-plugin": "^4.3.0",
-    "@typescript-eslint/parser": "^4.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.4",
+    "@typescript-eslint/parser": "^4.28.4",
     "bili": "^5.0.5",
     "eslint": "^7.10.0",
     "eslint-plugin-prettier": "^3.1.4",
