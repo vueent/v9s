@@ -35,16 +35,17 @@ export class Validator {
   }
 
   public check(value: any, context: any = {}): boolean | string {
-    if (!this.strict && value === undefined) return true;
-    else if (!this.rule) return this.next?.check(this.modifier(value, context), context) ?? true;
+    if (!this.rule) return this.next?.check(this.modifier(value, context), context) ?? true;
 
-    let result = this.rule(value, context);
+    const optional = !this.strict && value === undefined;
+    let result = optional || this.rule(value, context);
 
-    if (this.inverse) result = !result;
+    if (this.inverse && !optional) result = !result;
 
-    if (!result && this.another?.check(this.modifier(value, context), context) === true) result = true;
+    let response: string | boolean;
 
-    const response = result ? true : this.message ?? false;
+    if (!result && this.another) response = this.another.check(this.modifier(value, context), context);
+    else response = result ? true : this.message ?? false;
 
     return result ? this.next?.check(this.modifier(value, context), context) ?? response : response;
   }
@@ -140,7 +141,7 @@ export class Validator {
   public optional(): Validator {
     if (this.proxy) return new Validator().optional();
 
-    this.strict = false;
+    if (this.next) this.next.strict = false;
 
     return this;
   }
@@ -156,7 +157,7 @@ export class Validator {
   public or(another: Validator): Validator {
     if (this.proxy) return new Validator().or(another);
 
-    this.another = another;
+    if (this.next) this.next.another = another;
 
     return this;
   }
