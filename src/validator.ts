@@ -8,46 +8,83 @@ export type Message = string | MessageFactory;
 
 export type Modifier = (value: any, context: any) => any;
 
+/**
+ * This class provides a single link of the chain.
+ */
 export class Validator {
-  private readonly next?: Validator;
-  private rule?: Rule;
-  private message?: Message;
-  private modifier: Modifier = value => value;
-  private strict = true;
-  private inverse = false;
-  private another?: Validator;
-  private proxy = false;
+  /**
+   * Next validator in the chain.
+   */
+  private readonly _next?: Validator;
+
+  /**
+   * Validation rule.
+   */
+  private _rule?: Rule;
+
+  /**
+   * Error message or its factory.
+   */
+  private _message?: Message;
+
+  /**
+   * Modifies a values before send it to the next chain link.
+   *
+   * @param value - verifying value
+   * @returns - modified verifying value
+   */
+  private _modifier: Modifier = value => value;
+
+  /**
+   * Allow optional (`undefined`) values.
+   */
+  private _strict = true;
+
+  /**
+   * Inverse (`not`) the result.
+   */
+  private _inverse = false;
+
+  /**
+   * Composed chain.
+   */
+  private _another?: Validator;
+
+  /**
+   * Initial value
+   */
+  private _proxy = false;
 
   constructor(next?: Validator, proxy = false) {
-    this.next = next;
-    this.proxy = proxy;
+    this._next = next;
+    this._proxy = proxy;
     this.check = this.check.bind(this);
   }
 
   public use(rule: Rule, message?: Message, modifier?: Modifier): Validator {
-    if (this.proxy) return new Validator().use(rule, message, modifier);
+    if (this._proxy) return new Validator().use(rule, message, modifier);
 
-    this.rule = rule;
-    this.modifier = modifier ?? this.modifier;
-    this.message = message;
+    this._rule = rule;
+    this._modifier = modifier ?? this._modifier;
+    this._message = message;
 
     return new Validator(this);
   }
 
   public check(value: any, context: any = {}): boolean | string {
-    if (!this.rule) return this.next?.check(this.modifier(value, context), context) ?? true;
+    if (!this._rule) return this._next?.check(this._modifier(value, context), context) ?? true;
 
-    const optional = !this.strict && value === undefined;
-    let result = optional || this.rule(value, context);
+    const optional = !this._strict && value === undefined;
+    let result = optional || this._rule(value, context);
 
-    if (this.inverse && !optional) result = !result;
+    if (this._inverse && !optional) result = !result;
 
     let response: string | boolean;
 
-    if (!result && this.another) response = this.another.check(this.modifier(value, context), context);
-    else response = result ? true : (typeof this.message === 'function' ? this.message() : this.message) ?? false;
+    if (!result && this._another) response = this._another.check(this._modifier(value, context), context);
+    else response = result ? true : (typeof this._message === 'function' ? this._message() : this._message) ?? false;
 
-    return result ? this.next?.check(this.modifier(value, context), context) ?? response : response;
+    return result ? this._next?.check(this._modifier(value, context), context) ?? response : response;
   }
 
   public string(message?: Message, modifier?: Modifier): Validator {
@@ -130,26 +167,28 @@ export class Validator {
     return this.use(rules.lengthBetween.bind(undefined, minimum, maximum), message, modifier);
   }
 
-  public optional(): Validator {
-    if (this.proxy) return new Validator().optional();
+  public optional(applyToCurrent = false): Validator {
+    if (this._proxy) return new Validator().optional();
 
-    if (this.next) this.next.strict = false;
+    if (applyToCurrent) this._strict = false;
+    else if (this._next) this._next.optional(true);
 
     return this;
   }
 
   public not(): Validator {
-    if (this.proxy) return new Validator().not();
+    if (this._proxy) return new Validator().not();
 
-    this.inverse = true;
+    this._inverse = true;
 
     return this;
   }
 
-  public or(another: Validator): Validator {
-    if (this.proxy) return new Validator().or(another);
+  public or(another: Validator, applyToCurrent = false): Validator {
+    if (this._proxy) return new Validator().or(another);
 
-    if (this.next) this.next.another = another;
+    if (applyToCurrent) this._another = another;
+    else if (this._next) this._next.or(another, true);
 
     return this;
   }
