@@ -15,8 +15,8 @@
     "test:debug": "node --inspect node_modules/.bin/jest --watch --runInBand",
     "prepublishOnly": "npm run build && npm run test:unit",
     "lint": "eslint src/**/*.ts,tests/**/*.ts",
-    "docs:dev": "vuepress dev docs/src",
-    "docs:build": "vuepress build --dest ./docs/dist docs/src"
+    "docs:dev": "vuepress dev docs-src/src",
+    "docs:build": "vuepress build --dest ./docs docs-src/src"
   },
   "keywords": [
     "vueent",
