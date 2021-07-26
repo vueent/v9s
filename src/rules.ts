@@ -99,9 +99,9 @@ export function ne(reference: any, value: any) {
 }
 
 /**
- * Returns `true` if the value is greater than the referenced value.
+ * Returns `true` if the value is greater than the threshold.
  *
- * @param reference - referenced value
+ * @param threshold - threshold value
  * @param value
  */
 export function gt(threshold: number, value: any) {
@@ -109,9 +109,9 @@ export function gt(threshold: number, value: any) {
 }
 
 /**
- * Returns `true` if the value is greater than or equal to the referenced value.
+ * Returns `true` if the value is greater than or equal to the threshold.
  *
- * @param reference - referenced value
+ * @param threshold - threshold value
  * @param value
  */
 export function gte(threshold: number, value: any) {
@@ -119,9 +119,9 @@ export function gte(threshold: number, value: any) {
 }
 
 /**
- * Returns `true` if the value is less than the referenced value.
+ * Returns `true` if the value is less than the threshold.
  *
- * @param reference - referenced value
+ * @param threshold - threshold value
  * @param value
  */
 export function lt(threshold: number, value: any) {
@@ -129,9 +129,9 @@ export function lt(threshold: number, value: any) {
 }
 
 /**
- * Returns `true` if the value is less than or equal to the referenced value.
+ * Returns `true` if the value is less than or equal to the threshold.
  *
- * @param reference - referenced value
+ * @param threshold - threshold value
  * @param value
  */
 export function lte(threshold: number, value: any) {
