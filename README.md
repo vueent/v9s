@@ -198,6 +198,44 @@ Modifier signature is:
 type Modifier = (value: any, context: any) => any;
 ```
 
+Message factory functions can be used instead of string messages. That feature may be useful for internationalized applications.
+
+```ts
+import v9s from 'v9s';
+
+enum Lang {
+  de,
+  en,
+  ru
+}
+
+let lang: Lang = Lang.en;
+
+const errorMessageFactory = () => {
+  switch (lang) {
+    case Lang.de:
+      return 'Ungültiger Wert';
+    case Lang.ru:
+      return 'Неверное значение';
+    default:
+      return 'Invalid value';
+  }
+};
+
+const check = v9s.between(10, 100, errorMessageFactory).check;
+
+console.log(check(50)); // true
+console.log(check(110)); // 'Invalid value'
+
+lang = Lang.de;
+
+console.log(check(110)); // 'Ungültiger Wert'
+
+lang = Lang.ru;
+
+console.log(check(110)); // 'Неверное значение'
+```
+
 You've seen a `context` parameter in the previous examples. This is an object (by default: `{}`) that moves between rules in the chain and allows communication between them. It may contain an intermediate calculations, other subject fields and so on. In the following example the intermediate calculations are moved between rules:
 
 ```ts
