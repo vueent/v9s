@@ -74,6 +74,40 @@ test('Example #9', () => {
 });
 
 test('Example #10', () => {
+  enum Lang {
+    de,
+    en,
+    ru
+  }
+
+  let lang: Lang = Lang.en;
+
+  const errorMessageFactory = () => {
+    switch (lang) {
+      case Lang.de:
+        return 'Ungültiger Wert';
+      case Lang.ru:
+        return 'Неверное значение';
+      default:
+        return 'Invalid value';
+    }
+  };
+
+  const check = v9s.between(10, 100, errorMessageFactory).check;
+
+  expect(check(50)).toBe(true);
+  expect(check(110)).toBe('Invalid value');
+
+  lang = Lang.de;
+
+  expect(check(110)).toBe('Ungültiger Wert');
+
+  lang = Lang.ru;
+
+  expect(check(110)).toBe('Неверное значение');
+});
+
+test('Example #11', () => {
   const checkForDuplicates = function (value: number[], context: { sorted?: number[] }) {
     const sorted = value.slice().sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 
@@ -105,7 +139,7 @@ test('Example #10', () => {
   expect(check([10, 60, 40, 20])).toBe(true);
 });
 
-test('Example #11', () => {
+test('Example #12', () => {
   interface Data {
     name: string;
     value: string;

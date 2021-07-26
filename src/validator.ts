@@ -11,7 +11,7 @@ export type Modifier = (value: any, context: any) => any;
 export class Validator {
   private readonly next?: Validator;
   private rule?: Rule;
-  private message?: string;
+  private message?: Message;
   private modifier: Modifier = value => value;
   private strict = true;
   private inverse = false;
@@ -29,7 +29,7 @@ export class Validator {
 
     this.rule = rule;
     this.modifier = modifier ?? this.modifier;
-    this.message = typeof message === 'function' ? message() : message;
+    this.message = message;
 
     return new Validator(this);
   }
@@ -45,7 +45,7 @@ export class Validator {
     let response: string | boolean;
 
     if (!result && this.another) response = this.another.check(this.modifier(value, context), context);
-    else response = result ? true : this.message ?? false;
+    else response = result ? true : (typeof this.message === 'function' ? this.message() : this.message) ?? false;
 
     return result ? this.next?.check(this.modifier(value, context), context) ?? response : response;
   }
