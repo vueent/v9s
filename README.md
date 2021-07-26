@@ -234,7 +234,7 @@ console.log(check([10, 60, 105, 40, 20])); // false - 105 > 100
 console.log(check([10, 60, 40, 20])); // true
 ```
 
-Yet another way to use a context is a conditional check according to other fields of the object. `value` and `name` fields of the interface do matter only when all of them are not empty.
+Yet another way to use a context is a conditional check according to other fields of the object. `value` and `name` fields of the interface do matter only when all of them are not empty. In the following example the context argument is manually sent to the `check` function.
 
 ```ts
 import v9s from 'v9s';
