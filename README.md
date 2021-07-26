@@ -2,6 +2,35 @@
 
 _v9s_ means _validations_. It is a small validation library with no dependencies and full TypeScript support. You use chains of rules to get a complex validation.
 
+## Contents
+
+1. [Motivation](#motivation)
+2. [Goals](#goals)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Built-in rules](#built-in-rules)
+   1. [string](#string)
+   2. [number](#number)
+   3. [boolean](#boolean)
+   4. [object](#object)
+   5. [null](#null)
+   6. [defined](#defined)
+   7. [notDefined](#notDefined)
+   8. [none](#none)
+   9. [notNone](#notNone)
+   10. [eq](#eq)
+   11. [ne](#ne)
+   12. [gt](#gt)
+   13. [gte](#gte)
+   14. [lt](#lt)
+   15. [lte](#lte)
+   16. [between](#between)
+   17. [minLength](#minLength)
+   18. [maxLength](#maxLength)
+   19. [strictLength](#strictLength)
+   20. [lengthBetween](#lengthBetween)
+6. [License](#license)
+
 ## Motivation
 
 The searching of a small and flexible validation library which works with and without TypeScript was failed. Some libraries work with only with or without TypeScipt, others contain too many useless prepared validation rules, which aren't used in our project.
