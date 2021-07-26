@@ -312,6 +312,326 @@ console.log(checkName(filled.name, filled), checkValue(filled.value, filled)); /
 
 ## Built-in rules
 
+### string
+
+The `string()` method applies a built-in rule that verifies a value if the value type is `string`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.string().check;
+
+console.log(check('42')); // true
+console.log(check(42)); // false
+```
+
+### number
+
+The `number()` method applies a built-in rule that verifies a value if the value type is `number`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.number().check;
+
+console.log(check(42)); // true
+console.log(check('42')); // false
+```
+
+### boolean
+
+The `boolean()` method applies a built-in rule that verifies a value if the value type is `boolean`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.boolean().check;
+
+console.log(check(true)); // true
+console.log(check(42)); // false
+```
+
+### object
+
+The `object()` method applies a built-in rule that verifies a value if the value type is `object` and the value is not `null`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.object().check;
+
+console.log(check({})); // true
+console.log(check(null)); // false
+console.log(check(42)); // false
+```
+
+### null
+
+The `null()` method applies a built-in rule that verifies a value if the value is `null`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.null().check;
+
+console.log(check(null)); // true
+console.log(check({})); // false
+console.log(check(42)); // false
+```
+
+### defined
+
+The `defined()` method applies a built-in rule that verifies a value if the value is not `undefined`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.defined().check;
+
+console.log(check(42)); // true
+console.log(check(null)); // true
+console.log(check(undefined)); // false
+```
+
+### notDefined
+
+The `notDefined()` method applies a built-in rule that verifies a value if the value is `undefined`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.notDefined().check;
+
+console.log(check(undefined)); // true
+console.log(check(42)); // false
+console.log(check(null)); // false
+```
+
+### none
+
+The `none()` method applies a built-in rule that verifies a value if the value is `null` or `undefined`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.none().check;
+
+console.log(check(undefined)); // true
+console.log(check(null)); // true
+console.log(check(42)); // false
+```
+
+### notNone
+
+The `notNone()` method applies a built-in rule that verifies a value if the value is not `null` or `undefined`.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.none().check;
+
+console.log(check(42)); // true
+console.log(check(undefined)); // false
+console.log(check(null)); // false
+```
+
+### eq
+
+The `eq()` method applies a built-in rule that verifies a value if the value is equal to the referenced value.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.eq(42).check;
+
+console.log(check(42)); // true
+console.log(check(43)); // false
+console.log(check('42')); // false
+```
+
+### ne
+
+The `ne()` method applies a built-in rule that verifies a value if the value is not equal to the referenced value.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.ne(42).check;
+
+console.log(check(43)); // true
+console.log(check('42')); // true
+console.log(check(42)); // false
+```
+
+### gt
+
+The `gt()` method applies a built-in rule that verifies a value if the value is greater than the threshold.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.gt(42).check;
+
+console.log(check(43)); // true
+console.log(check(42)); // false
+```
+
+### gte
+
+The `gte()` method applies a built-in rule that verifies a value if the value is greater than or equal to the threshold.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.gte(42).check;
+
+console.log(check(43)); // true
+console.log(check(42)); // true
+console.log(check(41)); // false
+```
+
+### lt
+
+The `lt()` method applies a built-in rule that verifies a value if the value is less than the threshold.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.lt(42).check;
+
+console.log(check(41)); // true
+console.log(check(42)); // false
+```
+
+### lte
+
+The `lte()` method applies a built-in rule that verifies a value if the value is less than or equal to the threshold.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.lte(42).check;
+
+console.log(check(41)); // true
+console.log(check(42)); // true
+console.log(check(43)); // false
+```
+
+### between
+
+The `between()` method applies a built-in rule that verifies a value if the value is between minimum and maximum reference values, inclusive.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.between(10, 100).check;
+
+console.log(check(10)); // true
+console.log(check(50)); // true
+console.log(check(9)); // false
+console.log(check(101)); // false
+```
+
+### minLength
+
+The `minLength()` method applies a built-in rule that verifies a value if the value length is greater than or equal to the specified minimum length.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.minLength(5).check;
+
+console.log(check('halo')); // false
+console.log(check('hello')); // true
+console.log(check('hello, world')); // true
+console.log(check([0, 1, 2, 3, 4])); // true
+```
+
+### maxLength
+
+The `maxLength()` method applies a built-in rule that verifies a value if the value length is less than or equal to the specified minimum length.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.minLength(5).check;
+
+console.log(check('halo')); // true
+console.log(check('hello')); // true
+console.log(check('hello, world')); // false
+console.log(check([0, 1, 2, 3, 4])); // true
+```
+
+### strictLength
+
+The `strictLength()` method applies a built-in rule that verifies a value if the value length is less than or equal to the specified minimum length.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.strictLength(5).check;
+
+console.log(check('halo')); // false
+console.log(check('hello')); // true
+console.log(check('hello, world')); // false
+console.log(check([0, 1, 2, 3, 4])); // true
+```
+
+### lengthBetween
+
+The `lengthBetween()` method applies a built-in rule that verifies a value if the value length is between minimum and maximum lengths, inclusive.
+
+Example:
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s.lengthBetween(5, 12).check;
+
+console.log(check('halo')); // false
+console.log(check('hello')); // true
+console.log(check('hello, world')); // true
+console.log(check([0, 1, 2, 3, 4])); // true
+```
+
 ## LICENSE
 
 [MIT](./LICENSE)
