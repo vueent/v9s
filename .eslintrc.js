@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es6: true,
+    es6: true
   },
   globals: {},
   extends: ['eslint:recommended', 'plugin:@typescript-eslint/eslint-recommended', 'plugin:@typescript-eslint/recommended'],
@@ -16,8 +16,8 @@ module.exports = {
       {
         anonymous: 'always',
         named: 'never',
-        asyncArrow: 'always',
-      },
+        asyncArrow: 'always'
+      }
     ],
     indent: ['error', 2, { SwitchCase: 1 }],
     '@typescript-eslint/no-explicit-any': 'off',
@@ -27,11 +27,11 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'no-console': 'error',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-extra-boolean-cast': 0,
+    'no-extra-boolean-cast': 0
   },
   parserOptions: {
     parser: '@typescript-eslint/parser',
     sourceType: 'module',
-    ecmaVersion: 2020,
-  },
+    ecmaVersion: 2020
+  }
 };
