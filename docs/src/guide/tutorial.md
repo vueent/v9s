@@ -1,55 +1,6 @@
-# v9s
+# Tutorial
 
-<p align="center">
-  <img src="docs/src/.vuepress/public/img/logo.png">
-</p>
-
-_v9s_ means _validations_. It is a small validation library with no dependencies and full TypeScript support. You use chains of rules to get a complex validation.
-
-## Contents
-
-1. [Motivation](#motivation)
-2. [Goals](#goals)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Built-in rules](#built-in-rules)
-   1. [string](#string)
-   2. [number](#number)
-   3. [boolean](#boolean)
-   4. [object](#object)
-   5. [null](#null)
-   6. [defined](#defined)
-   7. [notDefined](#notDefined)
-   8. [none](#none)
-   9. [notNone](#notNone)
-   10. [eq](#eq)
-   11. [ne](#ne)
-   12. [gt](#gt)
-   13. [gte](#gte)
-   14. [lt](#lt)
-   15. [lte](#lte)
-   16. [between](#between)
-   17. [minLength](#minLength)
-   18. [maxLength](#maxLength)
-   19. [strictLength](#strictLength)
-   20. [lengthBetween](#lengthBetween)
-6. [License](#license)
-
-## Motivation
-
-The searching of a small and flexible validation library which works with and without TypeScript was failed. Some libraries work with only with or without TypeScipt, others contain too many useless prepared validation rules, which aren't used in our project.
-
-## Goals
-
-So, our goal is a small and flexible library without external dependencies that works perfectly good with and without TypeScript.
-
-## Installation
-
-```sh
-npm install --save-dev v9s
-```
-
-## Usage
+## Simple example
 
 v9s creates a rules chain. An execution of the chain starts at the end and finishes at the beginning (see the following examples). You may include your own rules in the chain with `use` method. Call `check` method to validate a value.
 
@@ -74,6 +25,8 @@ const normal = validator.check(50); // check normal value
 console.log(normal); // true
 ```
 
+## Error messages
+
 It is often necessary to add text messages instead of `true` or `false` result. Very easy, just add the second string parameter to a built-in rule or `use` method. Let's rewrite the previous example:
 
 ```ts
@@ -94,6 +47,8 @@ const normal = validator.check(50); // check normal value
 
 console.log(normal); // true
 ```
+
+## Sequence
 
 But what we have to do, if need to receive different error messages for the same rule with a number of thresholds? So, it's a time to remember a sequence of the chain execution.
 
@@ -116,6 +71,8 @@ const normal = validator.check(110); // check a normal value
 console.log(normal); // true
 ```
 
+## Inversion
+
 Sometimes we want to inverse a result of a rule. Easy! Meet the `not` method:
 
 ```ts
@@ -132,6 +89,8 @@ const isString = validator.check('42'); // check a string
 
 console..log(isString); // false (not a string)
 ```
+
+## Optional modifier
 
 Otherwise it is possible to allow `undefined` values:
 
@@ -154,6 +113,8 @@ console.log(isNotDefined); // true
 ```
 
 The `optional` modifier applies only to the specified rule; the next rule ignores it.
+
+## Composition
 
 When it is necessary to add an alternative condition, it's time to use the `or` method:
 
@@ -193,6 +154,8 @@ const check = v9s.string().optional().or(v9s.number()).check;
 console.log(check('42')); // true
 ```
 
+## External rules
+
 Of course, the library contains a minimal number of rules inside, it is possible to use external rules. An external rule should be compatible with this signature:
 
 ```ts
@@ -210,6 +173,8 @@ const check = v9s.use(integer).check;
 console.log(check('42')); // true
 console.log(check('42a')); // false
 ```
+
+## Modifiers
 
 Okay, we are assured that our value is an integer string. Now add a range of valid values and convert the value to type `number` via `Modifier`:
 
@@ -230,6 +195,8 @@ Modifier signature is:
 ```ts
 type Modifier = (value: any, context: any) => any;
 ```
+
+## Internationalization
 
 Message factory functions can be used instead of string messages. That feature may be useful for internationalized applications.
 
@@ -268,6 +235,8 @@ lang = Lang.ru;
 
 console.log(check(110)); // 'Неверное значение'
 ```
+
+## Context
 
 You've seen a `context` parameter in the previous examples. This is an object (by default: `{}`) that moves between rules in the chain and allows communication between them. It may contain an intermediate calculations, other subject fields and so on. In the following example the intermediate calculations are moved between rules:
 
@@ -342,329 +311,3 @@ const filled = { name: 'the answer', value: '42' };
 
 console.log(checkName(filled.name, filled), checkValue(filled.value, filled)); // true, true
 ```
-
-## Built-in rules
-
-### string
-
-The `string()` method applies a built-in rule that verifies a value if the value type is `string`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.string().check;
-
-console.log(check('42')); // true
-console.log(check(42)); // false
-```
-
-### number
-
-The `number()` method applies a built-in rule that verifies a value if the value type is `number`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.number().check;
-
-console.log(check(42)); // true
-console.log(check('42')); // false
-```
-
-### boolean
-
-The `boolean()` method applies a built-in rule that verifies a value if the value type is `boolean`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.boolean().check;
-
-console.log(check(true)); // true
-console.log(check(42)); // false
-```
-
-### object
-
-The `object()` method applies a built-in rule that verifies a value if the value type is `object` and the value is not `null`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.object().check;
-
-console.log(check({})); // true
-console.log(check(null)); // false
-console.log(check(42)); // false
-```
-
-### null
-
-The `null()` method applies a built-in rule that verifies a value if the value is `null`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.null().check;
-
-console.log(check(null)); // true
-console.log(check({})); // false
-console.log(check(42)); // false
-```
-
-### defined
-
-The `defined()` method applies a built-in rule that verifies a value if the value is not `undefined`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.defined().check;
-
-console.log(check(42)); // true
-console.log(check(null)); // true
-console.log(check(undefined)); // false
-```
-
-### notDefined
-
-The `notDefined()` method applies a built-in rule that verifies a value if the value is `undefined`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.notDefined().check;
-
-console.log(check(undefined)); // true
-console.log(check(42)); // false
-console.log(check(null)); // false
-```
-
-### none
-
-The `none()` method applies a built-in rule that verifies a value if the value is `null` or `undefined`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.none().check;
-
-console.log(check(undefined)); // true
-console.log(check(null)); // true
-console.log(check(42)); // false
-```
-
-### notNone
-
-The `notNone()` method applies a built-in rule that verifies a value if the value is not `null` or `undefined`.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.none().check;
-
-console.log(check(42)); // true
-console.log(check(undefined)); // false
-console.log(check(null)); // false
-```
-
-### eq
-
-The `eq()` method applies a built-in rule that verifies a value if the value is equal to the referenced value.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.eq(42).check;
-
-console.log(check(42)); // true
-console.log(check(43)); // false
-console.log(check('42')); // false
-```
-
-### ne
-
-The `ne()` method applies a built-in rule that verifies a value if the value is not equal to the referenced value.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.ne(42).check;
-
-console.log(check(43)); // true
-console.log(check('42')); // true
-console.log(check(42)); // false
-```
-
-### gt
-
-The `gt()` method applies a built-in rule that verifies a value if the value is greater than the threshold.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.gt(42).check;
-
-console.log(check(43)); // true
-console.log(check(42)); // false
-```
-
-### gte
-
-The `gte()` method applies a built-in rule that verifies a value if the value is greater than or equal to the threshold.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.gte(42).check;
-
-console.log(check(43)); // true
-console.log(check(42)); // true
-console.log(check(41)); // false
-```
-
-### lt
-
-The `lt()` method applies a built-in rule that verifies a value if the value is less than the threshold.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.lt(42).check;
-
-console.log(check(41)); // true
-console.log(check(42)); // false
-```
-
-### lte
-
-The `lte()` method applies a built-in rule that verifies a value if the value is less than or equal to the threshold.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.lte(42).check;
-
-console.log(check(41)); // true
-console.log(check(42)); // true
-console.log(check(43)); // false
-```
-
-### between
-
-The `between()` method applies a built-in rule that verifies a value if the value is between minimum and maximum reference values, inclusive.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.between(10, 100).check;
-
-console.log(check(10)); // true
-console.log(check(50)); // true
-console.log(check(9)); // false
-console.log(check(101)); // false
-```
-
-### minLength
-
-The `minLength()` method applies a built-in rule that verifies a value if the value length is greater than or equal to the specified minimum length.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.minLength(5).check;
-
-console.log(check('halo')); // false
-console.log(check('hello')); // true
-console.log(check('hello, world')); // true
-console.log(check([0, 1, 2, 3, 4])); // true
-```
-
-### maxLength
-
-The `maxLength()` method applies a built-in rule that verifies a value if the value length is less than or equal to the specified minimum length.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.minLength(5).check;
-
-console.log(check('halo')); // true
-console.log(check('hello')); // true
-console.log(check('hello, world')); // false
-console.log(check([0, 1, 2, 3, 4])); // true
-```
-
-### strictLength
-
-The `strictLength()` method applies a built-in rule that verifies a value if the value length is less than or equal to the specified minimum length.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.strictLength(5).check;
-
-console.log(check('halo')); // false
-console.log(check('hello')); // true
-console.log(check('hello, world')); // false
-console.log(check([0, 1, 2, 3, 4])); // true
-```
-
-### lengthBetween
-
-The `lengthBetween()` method applies a built-in rule that verifies a value if the value length is between minimum and maximum lengths, inclusive.
-
-Example:
-
-```ts
-import v9s from 'v9s';
-
-const check = v9s.lengthBetween(5, 12).check;
-
-console.log(check('halo')); // false
-console.log(check('hello')); // true
-console.log(check('hello, world')); // true
-console.log(check([0, 1, 2, 3, 4])); // true
-```
-
-## LICENSE
-
-[MIT](./LICENSE)

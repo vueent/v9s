@@ -1,0 +1,19 @@
+{
+  "name": "v9s",
+  "version": "0.0.1",
+  "description": "Typescript-based validations",
+  "main": "index.js",
+  "authors": {
+    "name": "",
+    "email": "nayretech@gmail.com"
+  },
+  "repository": "github.com/vueent/v9s/v9s",
+  "scripts": {
+    "dev": "vuepress dev src",
+    "build": "vuepress build src"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^1.5.3"
+  }
+}
