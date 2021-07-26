@@ -4,7 +4,7 @@
   <img src="docs/src/.vuepress/public/img/logo.png">
 </p>
 
-_v9s_ means _validations_. It is a small validation library with no dependencies and full TypeScript support. You use chains of rules to get a complex validation. See the [documentation](https://v9s.github.io/).
+_v9s_ means _validations_. It is a small validation library with no dependencies and full TypeScript support. You use chains of rules to get a complex validation. See the [documentation](https://vueent.github.io/v9s/).
 
 [![Build Status](https://travis-ci.com/vueent/v9s.svg?branch=main)](https://travis-ci.com/vueent/v9s)
 

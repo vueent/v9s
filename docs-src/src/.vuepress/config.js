@@ -3,7 +3,7 @@ const { description } = require('../../package');
 module.exports = {
   title: 'v9s',
   description: description,
-  base: '',
+  base: '/v9s/',
   head: [
     ['meta', { name: 'theme-color', content: '#0078cf' }],
     ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
