@@ -86,14 +86,6 @@ export class Validator {
     return this.use(rules.isNotNone, message, modifier);
   }
 
-  public min(minumum: number, message?: Message, modifier?: Modifier): Validator {
-    return this.use(rules.min.bind(undefined, minumum), message, modifier);
-  }
-
-  public max(maximum: number, message?: Message, modifier?: Modifier): Validator {
-    return this.use(rules.max.bind(undefined, maximum), message, modifier);
-  }
-
   public eq(reference: any, message?: Message, modifier?: Modifier): Validator {
     return this.use(rules.eq.bind(undefined, reference), message, modifier);
   }

@@ -37,7 +37,7 @@ test('A chain of external validation functions have to use the context', () => {
 });
 
 test('Optional chain', () => {
-  const check = v9s.max(100).optional().check;
+  const check = v9s.lte(100).optional().check;
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe(false);
@@ -45,7 +45,7 @@ test('Optional chain', () => {
 });
 
 test('Inversed chain', () => {
-  const check = v9s.not().min(10).check;
+  const check = v9s.not().gte(10).check;
 
   expect(check(9)).toBe(true);
   expect(check(11)).toBe(false);
@@ -66,7 +66,7 @@ test('Conditional chain (a string with a length between 2 and 10 chars or a numb
 });
 
 test('Value modifier', () => {
-  const check = v9s.max(100).min(10, undefined, (value: number) => value * 2).check;
+  const check = v9s.lte(100).gte(10, undefined, (value: number) => value * 2).check;
 
   expect(check(20)).toBe(true);
   expect(check(9)).toBe(false);

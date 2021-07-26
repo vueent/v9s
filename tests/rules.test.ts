@@ -1,13 +1,5 @@
 import v9s from '@/index';
 
-test('Simple volume tuner validation (min and max)', () => {
-  const check = v9s.max(100, 'The volume is too loud').min(0, 'The volume cannot be less than the silence').check;
-
-  expect(check(10)).toBe(true);
-  expect(check(120)).toBe('The volume is too loud');
-  expect(check(-1)).toBe('The volume cannot be less than the silence');
-});
-
 test('Simple volume tuner validation (between)', () => {
   const check = v9s.between(0, 100, 'Unexpected volume').check;
 

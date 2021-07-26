@@ -42,14 +42,6 @@ export function ne(reference: any, value: any) {
   return reference !== value;
 }
 
-export function min(minimum: number, value: any) {
-  return minimum <= value;
-}
-
-export function max(maximum: number, value: any) {
-  return value <= maximum;
-}
-
 export function gt(threshold: number, value: any) {
   return threshold < value;
 }
