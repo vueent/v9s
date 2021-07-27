@@ -1,4 +1,5 @@
 import v9s from '@/index';
+import exp from 'constants';
 
 test('Use an external validation function', () => {
   const min = function (minimum: number, value: string) {
@@ -93,4 +94,11 @@ test('Combined not, or and optional methods usage', () => {
   expect(check2(false)).toBe(false);
   expect(check2(1)).toBe(true);
   expect(check2('')).toBe(true);
+});
+
+test('Proxy instance behavior', () => {
+  expect(v9s.check(42)).toBe(true);
+  expect(v9s.not().check(undefined)).toBe(true);
+  expect(v9s.optional().check(null)).toBe(true);
+  expect(v9s.or(v9s).check(true)).toBe(true);
 });

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   rootDir: '.',
   name: 'v9s',
   displayName: 'v9s',
