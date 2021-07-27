@@ -11,6 +11,15 @@ module.exports = {
     ['link', { rel: 'icon', href: '/img/logo.png' }]
   ],
 
+  locales: {
+    '/': {
+      lang: 'en-US'
+    },
+    '/ru/': {
+      lang: 'ru-Ru'
+    }
+  },
+
   /**
    * Theme configuration, here is the default theme configuration for VuePress.
    *
@@ -22,18 +31,60 @@ module.exports = {
     docsDir: '',
     editLinkText: '',
     lastUpdated: false,
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Guide', link: '/guide/' }
-    ],
-    sidebar: {
-      '/guide/': [
-        {
-          title: 'Guide',
-          collapsable: true,
-          children: ['', 'tutorial', 'built-in-rules']
+    sidebar: 'auto',
+    locales: {
+      '/': {
+        selectText: 'Languages',
+        label: 'English',
+        ariaLabel: 'Languages',
+        editLinkText: 'Edit this page on GitHub',
+        serviceWorker: {
+          updatePopup: {
+            message: 'New content is available.',
+            buttonText: 'Refresh'
+          }
+        },
+        algolia: {},
+        nav: [
+          { text: 'Home', link: '/' },
+          { text: 'Guide', link: '/guide/' }
+        ],
+        sidebar: {
+          '/guide/': [
+            {
+              title: 'Guide',
+              collapsable: true,
+              children: ['', 'tutorial', 'built-in-rules']
+            }
+          ]
         }
-      ]
+      },
+      '/ru/': {
+        selectText: 'Языки',
+        label: 'Русский',
+        ariaLabel: 'Языки',
+        editLinkText: 'Редактировкать эту страницу на GitHub',
+        serviceWorker: {
+          updatePopup: {
+            message: 'Доступна новая редакция.',
+            buttonText: 'Обновить'
+          }
+        },
+        algolia: {},
+        nav: [
+          { text: 'Главная', link: '/ru/' },
+          { text: 'Руководство', link: '/ru/guide/' }
+        ],
+        sidebar: {
+          '/ru/guide/': [
+            {
+              title: 'Руководство',
+              collapsable: true,
+              children: ['', 'tutorial', 'built-in-rules']
+            }
+          ]
+        }
+      }
     }
   },
 
