@@ -1,5 +1,4 @@
 import v9s from '@/index';
-import exp from 'constants';
 
 test('Use an external validation function', () => {
   const min = function (minimum: number, value: string) {
