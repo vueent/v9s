@@ -1,6 +1,6 @@
 {
   "name": "v9s",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "TypeScript-based validations",
   "main": "index.js",
   "authors": {
