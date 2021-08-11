@@ -1,4 +1,4 @@
-# Введение
+# Introduction
 
 _v9s_ means _validations_. It is a small validation library with no dependencies and full TypeScript support. _Use chains of rules to get a complex validation._
 
