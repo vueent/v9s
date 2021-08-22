@@ -95,9 +95,12 @@ test('Combined not, or and optional methods usage', () => {
   expect(check2('')).toBe(true);
 });
 
-test('Proxy instance behavior', () => {
-  expect(v9s.check(42)).toBe(true);
-  expect(v9s.not().check(undefined)).toBe(true);
-  expect(v9s.optional().check(null)).toBe(true);
-  expect(v9s.or(v9s).check(true)).toBe(true);
+test('A generic message type using', () => {
+  const check = v9s.boolean<number>(0).check;
+
+  expect(check('true')).toBe(0);
+
+  const checkFactory = v9s.boolean<number>(() => 0).check;
+
+  expect(checkFactory('true')).toBe(0);
 });

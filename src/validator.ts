@@ -2,20 +2,22 @@ import * as rules from './rules';
 
 export type Rule = (value: any, context: any) => boolean;
 
-export type MessageFactory = () => string;
+export type ErrorType<T> = T extends boolean ? never : T extends Function ? never : T; // eslint-disable-line @typescript-eslint/ban-types
 
-export type Message = string | MessageFactory;
+export type MessageFactory<T = string, E extends ErrorType<T> = ErrorType<T>> = () => E;
+
+export type Message<T = string, E extends ErrorType<T> = ErrorType<T>> = E | MessageFactory<T, E>;
 
 export type Modifier = (value: any, context: any) => any;
 
 /**
  * This class provides a single link of the chain.
  */
-export class Validator {
+export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
   /**
    * Next validator in the chain.
    */
-  private readonly _next?: Validator;
+  private readonly _next?: Validator<T, E>;
 
   /**
    * Validation rule.
@@ -25,7 +27,7 @@ export class Validator {
   /**
    * Error message or its factory.
    */
-  private _message?: Message;
+  private _message?: Message<T, E>;
 
   /**
    * Modifies a values before send it to the next chain link.
@@ -48,7 +50,7 @@ export class Validator {
   /**
    * Composed chain.
    */
-  private _another?: Validator;
+  private _another?: Validator<T, E>;
 
   /**
    * The instance is a root instance.
@@ -59,7 +61,7 @@ export class Validator {
    * @param next - next validator
    * @param proxy - make instance root
    */
-  constructor(next?: Validator, proxy = false) {
+  constructor(next?: Validator<T, E>, proxy = false) {
     this._next = next;
     this._proxy = proxy;
     this.check = this.check.bind(this);
@@ -73,14 +75,14 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public use(rule: Rule, message?: Message, modifier?: Modifier): Validator {
-    if (this._proxy) return new Validator().use(rule, message, modifier);
+  public use(rule: Rule, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+    if (this._proxy) return new Validator<T, E>().use(rule, message, modifier);
 
     this._rule = rule;
     this._modifier = modifier ?? this._modifier;
     this._message = message;
 
-    return new Validator(this);
+    return new Validator<T, E>(this);
   }
 
   /**
@@ -90,7 +92,7 @@ export class Validator {
    * @param context - context object
    * @returns - checking result
    */
-  public check(value: any, context: any = {}): boolean | string {
+  public check(value: any, context: any = {}): boolean | E {
     if (!this._rule) return this._next?.check(this._modifier(value, context), context) ?? true;
 
     const optional = !this._strict && value === undefined;
@@ -98,10 +100,11 @@ export class Validator {
 
     if (this._inverse && !optional) result = !result;
 
-    let response: string | boolean;
+    let response: boolean | E;
 
     if (!result && this._another) response = this._another.check(this._modifier(value, context), context);
-    else response = result ? true : (typeof this._message === 'function' ? this._message() : this._message) ?? false;
+    else if (result) response = true;
+    else response = (typeof this._message === 'function' ? (this._message as MessageFactory<T, E>)() : this._message) ?? false;
 
     return result ? this._next?.check(this._modifier(value, context), context) ?? response : response;
   }
@@ -113,7 +116,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public string(message?: Message, modifier?: Modifier): Validator {
+  public string(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isString, message, modifier);
   }
 
@@ -124,7 +127,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public number(message?: Message, modifier?: Modifier): Validator {
+  public number(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isNumber, message, modifier);
   }
 
@@ -135,7 +138,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public boolean(message?: Message, modifier?: Modifier): Validator {
+  public boolean(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isBoolean, message, modifier);
   }
 
@@ -146,7 +149,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public object(message?: Message, modifier?: Modifier): Validator {
+  public object(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isObject, message, modifier);
   }
 
@@ -157,7 +160,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public null(message?: Message, modifier?: Modifier): Validator {
+  public null(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isNull, message, modifier);
   }
 
@@ -168,7 +171,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public defined(message?: Message, modifier?: Modifier): Validator {
+  public defined(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isDefined, message, modifier);
   }
 
@@ -179,7 +182,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public notDefined(message?: Message, modifier?: Modifier): Validator {
+  public notDefined(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isUndefined, message, modifier);
   }
 
@@ -190,7 +193,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public none(message?: Message, modifier?: Modifier): Validator {
+  public none(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isNone, message, modifier);
   }
 
@@ -201,7 +204,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public notNone(message?: Message, modifier?: Modifier): Validator {
+  public notNone(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.isNotNone, message, modifier);
   }
 
@@ -213,7 +216,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public eq(reference: any, message?: Message, modifier?: Modifier): Validator {
+  public eq(reference: any, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.eq.bind(undefined, reference), message, modifier);
   }
 
@@ -225,7 +228,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public ne(reference: any, message?: Message, modifier?: Modifier): Validator {
+  public ne(reference: any, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.ne.bind(undefined, reference), message, modifier);
   }
 
@@ -237,7 +240,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public gt(threshold: number, message?: Message, modifier?: Modifier): Validator {
+  public gt(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.gt.bind(undefined, threshold), message, modifier);
   }
 
@@ -249,7 +252,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public gte(threshold: number, message?: Message, modifier?: Modifier): Validator {
+  public gte(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.gte.bind(undefined, threshold), message, modifier);
   }
 
@@ -261,7 +264,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public lt(threshold: number, message?: Message, modifier?: Modifier): Validator {
+  public lt(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.lt.bind(undefined, threshold), message, modifier);
   }
 
@@ -273,7 +276,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public lte(threshold: number, message?: Message, modifier?: Modifier): Validator {
+  public lte(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.lte.bind(undefined, threshold), message, modifier);
   }
 
@@ -286,7 +289,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public between(minimum: number, maximum: number, message?: Message, modifier?: Modifier): Validator {
+  public between(minimum: number, maximum: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.between.bind(undefined, minimum, maximum), message, modifier);
   }
 
@@ -298,7 +301,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public minLength(length: number, message?: Message, modifier?: Modifier): Validator {
+  public minLength(length: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.minLength.bind(undefined, length), message, modifier);
   }
 
@@ -310,7 +313,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public maxLength(length: number, message?: Message, modifier?: Modifier): Validator {
+  public maxLength(length: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.maxLength.bind(undefined, length), message, modifier);
   }
 
@@ -322,7 +325,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public strictLength(length: number, message?: Message, modifier?: Modifier): Validator {
+  public strictLength(length: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.strictLength.bind(undefined, length), message, modifier);
   }
 
@@ -335,7 +338,7 @@ export class Validator {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public lengthBetween(minimum: number, maximum: number, message?: Message, modifier?: Modifier): Validator {
+  public lengthBetween(minimum: number, maximum: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
     return this.use(rules.lengthBetween.bind(undefined, minimum, maximum), message, modifier);
   }
 
@@ -345,8 +348,8 @@ export class Validator {
    * @param applyToCurrent - apply to the current instance instead of the next
    * @returns - current chain link or next chain link (for proxies)
    */
-  public optional(applyToCurrent = false): Validator {
-    if (this._proxy) return new Validator().optional();
+  public optional(applyToCurrent = false): Validator<T, E> {
+    if (this._proxy) return new Validator<T, E>().optional();
 
     if (applyToCurrent) this._strict = false;
     else if (this._next) this._next.optional(true);
@@ -361,8 +364,8 @@ export class Validator {
    *
    * @returns - current chain link
    */
-  public not(): Validator {
-    if (this._proxy) return new Validator().not();
+  public not(): Validator<T, E> {
+    if (this._proxy) return new Validator<T, E>().not();
 
     this._inverse = true;
 
@@ -376,8 +379,8 @@ export class Validator {
    * @param applyToCurrent - apply to the current instance instead of the next
    * @returns - current chain link or next chain link (for proxies)
    */
-  public or(another: Validator, applyToCurrent = false): Validator {
-    if (this._proxy) return new Validator().or(another);
+  public or(another: Validator<T, E>, applyToCurrent = false): Validator<T, E> {
+    if (this._proxy) return new Validator<T, E>().or(another);
 
     if (applyToCurrent) this._another = another;
     else if (this._next) this._next.or(another, true);
