@@ -1,0 +1,43 @@
+#ide
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# vendor
+node_modules/
+
+# src
+docs-src/
+lib/
+src/
+tests/
+README.md
+tsconfig.json
+tsconfig.bundle.json
+rollup.config.mjs
+package.json
+package-lock.json
+lint-staged.config.js
+jest.config.mjs
+.travis.yml
+.prettierrc
+.prettierignore
+.npmignore
+.huskyrc.js
+.eslintrc.js
+.eslintignore
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# tests
+/coverage
+/packages/*/coverage
+
