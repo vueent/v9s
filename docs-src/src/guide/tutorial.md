@@ -48,6 +48,31 @@ const normal = validator.check(50); // check normal value
 console.log(normal); // true
 ```
 
+If you need to use an another message format - set the type (except for `boolean` or `Function`):
+
+```ts
+import v9s from 'v9s';
+
+enum ValidationError {
+  tooSmall,
+  tooBig
+}
+
+const validator = v9s.lte<ValidationError>(100, tooBig).gte(10, tooSmall);
+
+const small = validator.check(1); // check small value
+
+console.log(small); // 0
+
+const big = validator.check(110); // check big value
+
+console.log(big); // 1
+
+const normal = validator.check(50); // check normal value
+
+console.log(normal); // true
+```
+
 ## Sequence
 
 But what we have to do, if need to receive different error messages for the same rule with a number of thresholds? So, it's a time to remember a sequence of the chain execution.

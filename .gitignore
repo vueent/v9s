@@ -11,6 +11,8 @@
 node_modules/
 
 # dist
+docs/
+docs-src/dist
 lib/
 
 # Log files

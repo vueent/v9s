@@ -48,6 +48,31 @@ const normal = validator.check(50); // проверяем нормальное �
 console.log(normal); // true
 ```
 
+Если вам нужно использовать другой формат сообщения - задайте его тип (кроме `boolean` или `Function`):
+
+```ts
+import v9s from 'v9s';
+
+enum ValidationError {
+  tooSmall,
+  tooBig
+}
+
+const validator = v9s.lte<ValidationError>(100, tooBig).gte(10, tooSmall);
+
+const small = validator.check(1); // check small value
+
+console.log(small); // 0
+
+const big = validator.check(110); // check big value
+
+console.log(big); // 1
+
+const normal = validator.check(50); // check normal value
+
+console.log(normal); // true
+```
+
 ## Последовательности
 
 Но что делать, если нам нужно получать разные сообщения об ошибках для одного и того же правила, но с некоторым набором пороговых значений? Что ж, пришло время вспомнить последовательность выполнения цепочки.
