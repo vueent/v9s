@@ -53,17 +53,10 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
   private _another?: Validator<T, E>;
 
   /**
-   * The instance is a root instance.
-   */
-  private _proxy = false;
-
-  /**
    * @param next - next validator
-   * @param proxy - make instance root
    */
-  constructor(next?: Validator<T, E>, proxy = false) {
+  constructor(next?: Validator<T, E>) {
     this._next = next;
-    this._proxy = proxy;
     this.check = this.check.bind(this);
   }
 
@@ -76,8 +69,6 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @returns - next chain link
    */
   public use(rule: Rule, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
-    if (this._proxy) return new Validator<T, E>().use(rule, message, modifier);
-
     this._rule = rule;
     this._modifier = modifier ?? this._modifier;
     this._message = message;
@@ -349,8 +340,6 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @returns - current chain link or next chain link (for proxies)
    */
   public optional(applyToCurrent = false): Validator<T, E> {
-    if (this._proxy) return new Validator<T, E>().optional();
-
     if (applyToCurrent) this._strict = false;
     else if (this._next) this._next.optional(true);
 
@@ -365,8 +354,6 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @returns - current chain link
    */
   public not(): Validator<T, E> {
-    if (this._proxy) return new Validator<T, E>().not();
-
     this._inverse = true;
 
     return this;
@@ -380,8 +367,6 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @returns - current chain link or next chain link (for proxies)
    */
   public or(another: Validator<T, E>, applyToCurrent = false): Validator<T, E> {
-    if (this._proxy) return new Validator<T, E>().or(another);
-
     if (applyToCurrent) this._another = another;
     else if (this._next) this._next.or(another, true);
 
