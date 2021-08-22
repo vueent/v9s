@@ -24,8 +24,6 @@ package-lock.json
 lint-staged.config.js
 jest.config.mjs
 .travis.yml
-.prettierrc
-.prettierignore
 .npmignore
 .huskyrc.js
 .eslintrc.js
