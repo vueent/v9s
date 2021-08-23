@@ -12,6 +12,6 @@ export function simplify<T>(v: Validator<T>): (value: any, context?: any) => tru
   return (value: any, context?: any) => {
     const result = v.check(value, context);
 
-    return result.passed ? true : (result.error as T);
+    return result.success ? true : (result.error as T);
   };
 }

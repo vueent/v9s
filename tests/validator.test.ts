@@ -118,6 +118,6 @@ test('A generic message type using', () => {
 
   const check2 = v9s.def<MyError>({ code: 0, text: 'Unexpected' }).boolean({ code: 1, text: 'Not boolean' }).check;
 
-  expect(check2(true).passed).toBe(true);
+  expect(check2(true).success).toBe(true);
   expect(check2('true').error).toStrictEqual({ code: 1, text: 'Not boolean' });
 });

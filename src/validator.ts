@@ -409,7 +409,7 @@ export class Validator<T = boolean> {
     if (!result && this._another) {
       const checkResult = this._another.check(this._modifier(value, context), context);
 
-      response = checkResult.passed ? true : checkResult;
+      response = checkResult.success ? true : checkResult;
     } else if (result) response = true;
     else {
       const message = typeof this._message === 'function' ? (this._message as MessageFactory<T>)() : this._message;
