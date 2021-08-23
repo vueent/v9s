@@ -1,11 +1,11 @@
-import v9s from '@/index';
+import v9s, { simplify } from '@/index';
 
 test('Use an external validation function', () => {
   const min = function (minimum: number, value: string) {
     return minimum <= Number(value);
   };
 
-  const check = v9s.use(min.bind(undefined, 10)).check;
+  const check = simplify(v9s.def(false).use(min.bind(undefined, 10)));
 
   expect(check('20')).toBe(true);
   expect(check('10')).toBe(true);
@@ -25,7 +25,9 @@ test('A chain of external validation functions have to use the context', () => {
     return isString ? minimum <= (value as string).length : true;
   };
 
-  const check = v9s.use(minOrMax.bind(undefined, 10), 'invalid').use(minLength.bind(undefined, 2), 'short').check;
+  const check = simplify(
+    v9s.def<string>().use(minLength.bind(undefined, 2), 'short').use(minOrMax.bind(undefined, 10), 'invalid')
+  );
 
   expect(check(20)).toBe(true);
   expect(check(20, { set: true })).toBe(true);
@@ -37,7 +39,7 @@ test('A chain of external validation functions have to use the context', () => {
 });
 
 test('Optional chain', () => {
-  const check = v9s.lte(100).optional().check;
+  const check = simplify(v9s.def(false).lte(100).optional());
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe(false);
@@ -45,14 +47,14 @@ test('Optional chain', () => {
 });
 
 test('Inversed chain', () => {
-  const check = v9s.not().gte(10).check;
+  const check = simplify(v9s.def(false).not().gte(10));
 
   expect(check(9)).toBe(true);
   expect(check(11)).toBe(false);
 });
 
 test('Conditional chain (a string with a length between 2 and 10 chars or a number between 10 and 100)', () => {
-  const check = v9s.lengthBetween(2, 10).string().or(v9s.between(10, 100).number()).check;
+  const check = simplify(v9s.def(false).string().or(v9s.def(false).number().between(10, 100)).lengthBetween(2, 10));
 
   expect(check('validations')).toBe(false);
   expect(check('a')).toBe(false);
@@ -66,7 +68,12 @@ test('Conditional chain (a string with a length between 2 and 10 chars or a numb
 });
 
 test('Value modifier', () => {
-  const check = v9s.lte(100).gte(10, undefined, (value: number) => value * 2).check;
+  const check = simplify(
+    v9s
+      .def(false)
+      .gte(10, undefined, (value: number) => value * 2)
+      .lte(100)
+  );
 
   expect(check(20)).toBe(true);
   expect(check(9)).toBe(false);
@@ -75,7 +82,7 @@ test('Value modifier', () => {
 });
 
 test('Combined not, or and optional methods usage', () => {
-  const check = v9s.boolean().or(v9s.not().between(10, 100).number()).optional().check;
+  const check = simplify(v9s.def(false).boolean().or(v9s.def(false).number().not().between(10, 100)).optional());
 
   expect(check(undefined)).toBe(true);
   expect(check(true)).toBe(true);
@@ -86,7 +93,7 @@ test('Combined not, or and optional methods usage', () => {
   expect(check(5)).toBe(true);
   expect(check(120)).toBe(true);
 
-  const check2 = v9s.not().boolean().optional().check;
+  const check2 = simplify(v9s.def(false).not().boolean().optional());
 
   expect(check2(undefined)).toBe(true);
   expect(check2(true)).toBe(false);
@@ -96,11 +103,21 @@ test('Combined not, or and optional methods usage', () => {
 });
 
 test('A generic message type using', () => {
-  const check = v9s.boolean<number>(0).check;
+  const check = v9s.def<number>().boolean(0).check;
 
-  expect(check('true')).toBe(0);
+  expect(check('true').error).toBe(0);
 
-  const checkFactory = v9s.boolean<number>(() => 0).check;
+  const checkFactory = v9s.def<number>().boolean(() => 0).check;
 
-  expect(checkFactory('true')).toBe(0);
+  expect(checkFactory('true').error).toBe(0);
+
+  interface MyError {
+    code: number;
+    text: string;
+  }
+
+  const check2 = v9s.def<MyError>({ code: 0, text: 'Unexpected' }).boolean({ code: 1, text: 'Not boolean' }).check;
+
+  expect(check2(true).passed).toBe(true);
+  expect(check2('true').error).toStrictEqual({ code: 1, text: 'Not boolean' });
 });

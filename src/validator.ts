@@ -1,33 +1,46 @@
 import * as rules from './rules';
+import ValidationResult from './validation-result';
 
 export type Rule = (value: any, context: any) => boolean;
 
-export type ErrorType<T> = T extends boolean ? never : T extends Function ? never : T; // eslint-disable-line @typescript-eslint/ban-types
+export type MessageFactory<T = boolean> = () => T;
 
-export type MessageFactory<T = string, E extends ErrorType<T> = ErrorType<T>> = () => E;
-
-export type Message<T = string, E extends ErrorType<T> = ErrorType<T>> = E | MessageFactory<T, E>;
+export type Message<T = boolean> = T | MessageFactory<T>;
 
 export type Modifier = (value: any, context: any) => any;
+
+export type CheckFunc<T> = (value: any, context: any) => ValidationResult<T>;
 
 /**
  * This class provides a single link of the chain.
  */
-export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
+export class Validator<T = boolean> {
+  /**
+   * Default negative value.
+   *
+   * This value will be used as a fail result if the message is not set.
+   */
+  protected readonly _defaultNegative?: T;
+
+  /**
+   * The `check` method of the chain root.
+   */
+  protected readonly _rootCheck?: CheckFunc<T>;
+
   /**
    * Next validator in the chain.
    */
-  private readonly _next?: Validator<T, E>;
+  protected _next?: Validator<T>;
 
   /**
    * Validation rule.
    */
-  private _rule?: Rule;
+  protected _rule?: Rule;
 
   /**
    * Error message or its factory.
    */
-  private _message?: Message<T, E>;
+  protected _message?: Message<T>;
 
   /**
    * Modifies a values before send it to the next chain link.
@@ -35,28 +48,30 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param value - checked value
    * @returns - modified checked value
    */
-  private _modifier: Modifier = value => value;
+  protected _modifier: Modifier = value => value;
 
   /**
    * Allow optional (`undefined`) values.
    */
-  private _strict = true;
+  protected _strict = true;
 
   /**
    * Inverse (`not`) the result.
    */
-  private _inverse = false;
+  protected _inverse = false;
 
   /**
    * Composed chain.
    */
-  private _another?: Validator<T, E>;
+  protected _another?: Validator<T>;
 
   /**
-   * @param next - next validator
+   * @param defaultNegative - will be used as a fail result if the message is not set
+   * @param rootCheck - the check method of a root validator
    */
-  constructor(next?: Validator<T, E>) {
-    this._next = next;
+  constructor(defaultNegative?: T, rootCheck?: CheckFunc<T>) {
+    this._defaultNegative = defaultNegative;
+    this._rootCheck = rootCheck;
     this.check = this.check.bind(this);
   }
 
@@ -68,12 +83,18 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public use(rule: Rule, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
-    this._rule = rule;
-    this._modifier = modifier ?? this._modifier;
-    this._message = message;
+  public use(rule: Rule, message?: Message<T>, modifier?: Modifier): Validator<T> {
+    if (!this._rule) {
+      this._rule = rule;
+      this._modifier = modifier ?? this._modifier;
+      this._message = message;
 
-    return new Validator<T, E>(this);
+      return this;
+    }
+
+    this._next = new Validator<T>(this._defaultNegative, this._rootCheck ?? this.check).use(rule, message, modifier);
+
+    return this._next;
   }
 
   /**
@@ -83,21 +104,12 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param context - context object
    * @returns - checking result
    */
-  public check(value: any, context: any = {}): boolean | E {
-    if (!this._rule) return this._next?.check(this._modifier(value, context), context) ?? true;
+  public check(value: any, context: any = {}): ValidationResult<T> {
+    if (this._rootCheck) return this._rootCheck(value, context);
 
-    const optional = !this._strict && value === undefined;
-    let result = optional || this._rule(value, context);
+    const response = this.verify(value, context);
 
-    if (this._inverse && !optional) result = !result;
-
-    let response: boolean | E;
-
-    if (!result && this._another) response = this._another.check(this._modifier(value, context), context);
-    else if (result) response = true;
-    else response = (typeof this._message === 'function' ? (this._message as MessageFactory<T, E>)() : this._message) ?? false;
-
-    return result ? this._next?.check(this._modifier(value, context), context) ?? response : response;
+    return response === true ? ValidationResult.passed<T>() : response;
   }
 
   /**
@@ -107,7 +119,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public string(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public string(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isString, message, modifier);
   }
 
@@ -118,7 +130,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public number(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public number(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isNumber, message, modifier);
   }
 
@@ -129,7 +141,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public boolean(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public boolean(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isBoolean, message, modifier);
   }
 
@@ -140,7 +152,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public object(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public object(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isObject, message, modifier);
   }
 
@@ -151,7 +163,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public null(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public null(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isNull, message, modifier);
   }
 
@@ -162,7 +174,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public defined(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public defined(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isDefined, message, modifier);
   }
 
@@ -173,7 +185,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public notDefined(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public notDefined(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isUndefined, message, modifier);
   }
 
@@ -184,7 +196,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public none(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public none(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isNone, message, modifier);
   }
 
@@ -195,7 +207,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public notNone(message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public notNone(message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.isNotNone, message, modifier);
   }
 
@@ -207,7 +219,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public eq(reference: any, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public eq(reference: any, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.eq.bind(undefined, reference), message, modifier);
   }
 
@@ -219,7 +231,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public ne(reference: any, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public ne(reference: any, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.ne.bind(undefined, reference), message, modifier);
   }
 
@@ -231,7 +243,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public gt(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public gt(threshold: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.gt.bind(undefined, threshold), message, modifier);
   }
 
@@ -243,7 +255,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public gte(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public gte(threshold: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.gte.bind(undefined, threshold), message, modifier);
   }
 
@@ -255,7 +267,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public lt(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public lt(threshold: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.lt.bind(undefined, threshold), message, modifier);
   }
 
@@ -267,7 +279,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public lte(threshold: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public lte(threshold: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.lte.bind(undefined, threshold), message, modifier);
   }
 
@@ -280,7 +292,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public between(minimum: number, maximum: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public between(minimum: number, maximum: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.between.bind(undefined, minimum, maximum), message, modifier);
   }
 
@@ -292,7 +304,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public minLength(length: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public minLength(length: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.minLength.bind(undefined, length), message, modifier);
   }
 
@@ -304,7 +316,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public maxLength(length: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public maxLength(length: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.maxLength.bind(undefined, length), message, modifier);
   }
 
@@ -316,7 +328,7 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public strictLength(length: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public strictLength(length: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.strictLength.bind(undefined, length), message, modifier);
   }
 
@@ -329,19 +341,17 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * @param modifier - value modifier (is used for in the next chain link)
    * @returns - next chain link
    */
-  public lengthBetween(minimum: number, maximum: number, message?: Message<T, E>, modifier?: Modifier): Validator<T, E> {
+  public lengthBetween(minimum: number, maximum: number, message?: Message<T>, modifier?: Modifier): Validator<T> {
     return this.use(rules.lengthBetween.bind(undefined, minimum, maximum), message, modifier);
   }
 
   /**
    * Allows `undefined` values.
    *
-   * @param applyToCurrent - apply to the current instance instead of the next
    * @returns - current chain link or next chain link (for proxies)
    */
-  public optional(applyToCurrent = false): Validator<T, E> {
-    if (applyToCurrent) this._strict = false;
-    else if (this._next) this._next.optional(true);
+  public optional(): Validator<T> {
+    this._strict = false;
 
     return this;
   }
@@ -353,7 +363,15 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    *
    * @returns - current chain link
    */
-  public not(): Validator<T, E> {
+  public not(): Validator<T> {
+    if (this._next) return this._next.not();
+
+    if (this._rule) {
+      this._next = new Validator<T>(this._defaultNegative, this._rootCheck ?? this.check);
+
+      return this._next.not();
+    }
+
     this._inverse = true;
 
     return this;
@@ -363,14 +381,45 @@ export class Validator<T = string, E extends ErrorType<T> = ErrorType<T>> {
    * Appends an alternative chain that starts when the current rule returns `false`.
    *
    * @param another - alternative chain
-   * @param applyToCurrent - apply to the current instance instead of the next
    * @returns - current chain link or next chain link (for proxies)
    */
-  public or(another: Validator<T, E>, applyToCurrent = false): Validator<T, E> {
-    if (applyToCurrent) this._another = another;
-    else if (this._next) this._next.or(another, true);
+  public or(another: Validator<T>): Validator<T> {
+    this._another = another;
 
     return this;
+  }
+
+  /**
+   * Verifies a value and returns an instance of {@link ValidationResult} with an error or `true`.
+   *
+   * @param value - checked value
+   * @param context - context object
+   * @returns - checking result
+   */
+  protected verify(value: any, context: any = {}): true | ValidationResult<T> {
+    if (!this._rule) return this._next?.verify(this._modifier(value, context), context) ?? true;
+
+    const optional = !this._strict && value === undefined;
+    let result = optional || this._rule(value, context);
+
+    if (this._inverse && !optional) result = !result;
+
+    let response: true | ValidationResult<T>;
+
+    if (!result && this._another) {
+      const checkResult = this._another.check(this._modifier(value, context), context);
+
+      response = checkResult.passed ? true : checkResult;
+    } else if (result) response = true;
+    else {
+      const message = typeof this._message === 'function' ? (this._message as MessageFactory<T>)() : this._message;
+
+      if (message !== undefined) response = ValidationResult.failed<T>(message);
+      else if (this._defaultNegative === undefined) throw new Error('Undefined default negative value');
+      else response = ValidationResult.failed<T>(this._defaultNegative);
+    }
+
+    return result ? this._next?.verify(this._modifier(value, context), context) ?? response : response;
   }
 }
 
