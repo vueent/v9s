@@ -63,7 +63,12 @@ export class Validator<T = boolean> {
   /**
    * Composed chain.
    */
-  protected _another?: Validator<T>;
+  protected _another?: CheckFunc<T> | Validator<T>;
+
+  /**
+   * An injected rule/subchain which have to be checked before the current chain.
+   */
+  protected _injection?: CheckFunc<T>;
 
   /**
    * @param defaultNegative - will be used as a fail result if the message is not set
@@ -364,8 +369,6 @@ export class Validator<T = boolean> {
    * @returns - current chain link
    */
   public not(): Validator<T> {
-    if (this._next) return this._next.not();
-
     if (this._rule) {
       this._next = new Validator<T>(this._defaultNegative, this._rootCheck ?? this.check);
 
@@ -383,8 +386,14 @@ export class Validator<T = boolean> {
    * @param another - alternative chain
    * @returns - current chain link or next chain link (for proxies)
    */
-  public or(another: Validator<T>): Validator<T> {
+  public or(another: CheckFunc<T> | Validator<T>): Validator<T> {
     this._another = another;
+
+    return this;
+  }
+
+  public inject(injection: CheckFunc<T>): Validator<T> {
+    this._injection = injection;
 
     return this;
   }
@@ -396,7 +405,13 @@ export class Validator<T = boolean> {
    * @param context - context object
    * @returns - checking result
    */
-  protected verify(value: any, context: any = {}): true | ValidationResult<T> {
+  protected verify(value: any, context: any): true | ValidationResult<T> {
+    if (this._injection) {
+      const subresult = this._injection(value, context);
+
+      if (subresult.error !== undefined) return subresult;
+    }
+
     if (!this._rule) return this._next?.verify(this._modifier(value, context), context) ?? true;
 
     const optional = !this._strict && value === undefined;
@@ -407,7 +422,10 @@ export class Validator<T = boolean> {
     let response: true | ValidationResult<T>;
 
     if (!result && this._another) {
-      const checkResult = this._another.check(this._modifier(value, context), context);
+      const checkResult =
+        typeof this._another === 'function'
+          ? this._another(this._modifier(value, context), context)
+          : this._another.check(this._modifier(value, context), context);
 
       response = checkResult.success ? true : checkResult;
     } else if (result) response = true;

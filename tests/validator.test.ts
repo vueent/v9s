@@ -1,4 +1,4 @@
-import v9s, { simplify } from '@/index';
+import v9s, { CheckFunc, ValidationResult, simplify, Message, MessageFactory } from '@/index';
 
 test('Use an external validation function', () => {
   const min = function (minimum: number, value: string) {
@@ -82,7 +82,7 @@ test('Value modifier', () => {
 });
 
 test('Combined not, or and optional methods usage', () => {
-  const check = simplify(v9s.def(false).boolean().or(v9s.def(false).number().not().between(10, 100)).optional());
+  const check = simplify(v9s.def(false).boolean().or(v9s.def(false).number().not().between(10, 100).check).optional());
 
   expect(check(undefined)).toBe(true);
   expect(check(true)).toBe(true);
@@ -120,4 +120,38 @@ test('A generic message type using', () => {
 
   expect(check2(true).success).toBe(true);
   expect(check2('true').error).toStrictEqual({ code: 1, text: 'Not boolean' });
+});
+
+test('Injections using', () => {
+  function every<T>(chain: CheckFunc<T>, message: Message<T>): CheckFunc<T> {
+    return (value: any, context: any = {}) => {
+      const getMessage = () => (typeof message === 'function' ? (message as MessageFactory<T>)() : message);
+
+      if (!Array.isArray(value)) return ValidationResult.failed<T>(getMessage());
+      else {
+        for (const v of value) {
+          const result = chain(v, context);
+
+          if (!result.success) return result;
+        }
+
+        return ValidationResult.passed<T>();
+      }
+    };
+  }
+
+  const check = simplify(v9s.def(false).inject(every(v9s.def(false).between(2, 10).check, false)));
+
+  expect(check([2, 3, 4, 5, 6])).toBe(true);
+  expect(check([1, 2, 3, 4, 5, 6])).toBe(false);
+});
+
+test('Undefined default value', () => {
+  const check = simplify(v9s.def<boolean>().number());
+
+  try {
+    check(true);
+  } catch (e) {
+    expect(e).toStrictEqual(new Error('Undefined default negative value'));
+  }
 });
