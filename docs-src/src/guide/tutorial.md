@@ -74,7 +74,7 @@ console.log(normal); // undefined
 ```
 
 ::: danger
-If no default error message is specified and no error message is specified for some rule in the chain too, an `Error('Undefined default negative value')` exception will be thrown.
+If no default error message is specified and no error message is specified for some rule in the chain too, an exception will be thrown.
 :::
 
 ```ts
