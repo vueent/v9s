@@ -24,7 +24,10 @@
     "prepublishOnly": "npm run build && npm run test:unit",
     "lint": "eslint src/**/*.ts tests/**/*.ts",
     "docs:dev": "vuepress dev docs-src/src",
-    "docs:build": "vuepress build --dest ./docs docs-src/src"
+    "docs:dev:v1": "vuepress dev docs-src/src/v1",
+    "docs:build": "npm run docs:build:v2 && npm run docs:build:v1",
+    "docs:build:v2": "vuepress build --dest ./docs docs-src/src",
+    "docs:build:v1": "vuepress build --dest ./docs/v1 docs-src/src/v1"
   },
   "keywords": [
     "vueent",
