@@ -1,7 +1,7 @@
 import v9s, { simplify } from '@/index';
 
 test('Simple volume tuner validation (between)', () => {
-  const check = simplify(v9s.def<string>().between(0, 100, 'Unexpected volume'));
+  const check = simplify(v9s<string>().between(0, 100, 'Unexpected volume'));
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe('Unexpected volume');
@@ -9,9 +9,7 @@ test('Simple volume tuner validation (between)', () => {
 });
 
 test('Simple volume tuner validation (gte and lte', () => {
-  const check = simplify(
-    v9s.def<string>().lte(100, 'The volume is too loud').gte(0, 'The volume cannot be less than the silence')
-  );
+  const check = simplify(v9s<string>().lte(100, 'The volume is too loud').gte(0, 'The volume cannot be less than the silence'));
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe('The volume is too loud');
@@ -19,9 +17,7 @@ test('Simple volume tuner validation (gte and lte', () => {
 });
 
 test('Simple volume tuner validation (gt and lt)', () => {
-  const check = simplify(
-    v9s.def<string>().lt(101, 'The volume is too loud').gt(-1, 'The volume cannot be less than the silence')
-  );
+  const check = simplify(v9s<string>().lt(101, 'The volume is too loud').gt(-1, 'The volume cannot be less than the silence'));
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe('The volume is too loud');
@@ -30,14 +26,14 @@ test('Simple volume tuner validation (gt and lt)', () => {
 });
 
 test('Check the argument type to be a string', () => {
-  const check = simplify(v9s.def(false).string());
+  const check = simplify(v9s(false).string());
 
   expect(check('string argument')).toBe(true);
   expect(check(1)).toBe(false);
 });
 
 test('Check the argument type to be a number', () => {
-  const check = simplify(v9s.def(false).number());
+  const check = simplify(v9s(false).number());
 
   expect(check('string argument')).toBe(false);
   expect(check({})).toBe(false);
@@ -47,7 +43,7 @@ test('Check the argument type to be a number', () => {
 });
 
 test('Check the argument type to be a boolean', () => {
-  const check = simplify(v9s.def(false).boolean());
+  const check = simplify(v9s(false).boolean());
 
   expect(check(true)).toBe(true);
   expect(check(false)).toBe(true);
@@ -57,7 +53,7 @@ test('Check the argument type to be a boolean', () => {
 });
 
 test('Make sure the argument type is object', () => {
-  const check = simplify(v9s.def(false).object());
+  const check = simplify(v9s(false).object());
 
   class testClass {}
 
@@ -69,7 +65,7 @@ test('Make sure the argument type is object', () => {
 });
 
 test('Make sure the argument is null', () => {
-  const check = simplify(v9s.def(false).null());
+  const check = simplify(v9s(false).null());
 
   expect(check(null)).toBe(true);
   expect(check({})).toBe(false);
@@ -77,7 +73,7 @@ test('Make sure the argument is null', () => {
 });
 
 test('Make sure the argument is defined', () => {
-  const check = simplify(v9s.def(false).defined());
+  const check = simplify(v9s(false).defined());
 
   expect(check(undefined)).toBe(false);
   expect(check(0)).toBe(true);
@@ -86,7 +82,7 @@ test('Make sure the argument is defined', () => {
 });
 
 test('Make sure the argument is not defined', () => {
-  const check = simplify(v9s.def(false).notDefined());
+  const check = simplify(v9s(false).notDefined());
 
   expect(check(undefined)).toBe(true);
   expect(check(0)).toBe(false);
@@ -95,7 +91,7 @@ test('Make sure the argument is not defined', () => {
 });
 
 test('Make sure the argument is none (null or undefined)', () => {
-  const check = simplify(v9s.def(false).none());
+  const check = simplify(v9s(false).none());
 
   expect(check(undefined)).toBe(true);
   expect(check(null)).toBe(true);
@@ -104,7 +100,7 @@ test('Make sure the argument is none (null or undefined)', () => {
 });
 
 test('Make sure the argument is not null or undefined', () => {
-  const check = simplify(v9s.def(false).notNone());
+  const check = simplify(v9s(false).notNone());
 
   expect(check(undefined)).toBe(false);
   expect(check(null)).toBe(false);
@@ -113,13 +109,13 @@ test('Make sure the argument is not null or undefined', () => {
 });
 
 test('Make sure the argument is equal to the reference', () => {
-  const check = simplify(v9s.def(false).eq(24));
+  const check = simplify(v9s(false).eq(24));
 
   expect(check(24)).toBe(true);
   expect(check(42)).toBe(false);
   expect(check('24')).toBe(false);
 
-  const stringCheck = simplify(v9s.def(false).eq('str'));
+  const stringCheck = simplify(v9s(false).eq('str'));
 
   expect(stringCheck('str')).toBe(true);
   expect(stringCheck('string')).toBe(false);
@@ -127,13 +123,13 @@ test('Make sure the argument is equal to the reference', () => {
 });
 
 test("Make sure the argument isn't equal to the reference", () => {
-  const check = simplify(v9s.def(false).ne(42));
+  const check = simplify(v9s(false).ne(42));
 
   expect(check(24)).toBe(true);
   expect(check(42)).toBe(false);
   expect(check('24')).toBe(true);
 
-  const stringCheck = simplify(v9s.def(false).ne('string'));
+  const stringCheck = simplify(v9s(false).ne('string'));
 
   expect(stringCheck('str')).toBe(true);
   expect(stringCheck('string')).toBe(false);
@@ -141,7 +137,7 @@ test("Make sure the argument isn't equal to the reference", () => {
 });
 
 test('Validate minimum and maximum string length (minLength and maxLength)', () => {
-  const check = simplify(v9s.def<string>().maxLength(10, 'too long').minLength(5, 'too short'));
+  const check = simplify(v9s<string>().maxLength(10, 'too long').minLength(5, 'too short'));
 
   expect(check('halo')).toBe('too short');
   expect(check('validations')).toBe('too long');
@@ -152,7 +148,7 @@ test('Validate minimum and maximum string length (minLength and maxLength)', () 
 });
 
 test('Validate minimum and maximum string length (lengthBetween', () => {
-  const check = simplify(v9s.def(false).lengthBetween(5, 10));
+  const check = simplify(v9s(false).lengthBetween(5, 10));
 
   expect(check('halo')).toBe(false);
   expect(check('validations')).toBe(false);
@@ -163,7 +159,7 @@ test('Validate minimum and maximum string length (lengthBetween', () => {
 });
 
 test('Validate the strict length of a string', () => {
-  const check = simplify(v9s.def(false).strictLength(2));
+  const check = simplify(v9s(false).strictLength(2));
 
   expect(check('')).toBe(false);
   expect(check('validations')).toBe(false);
