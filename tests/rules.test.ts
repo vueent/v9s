@@ -1,7 +1,7 @@
-import v9s from '@/index';
+import v9s, { simplify } from '@/index';
 
 test('Simple volume tuner validation (between)', () => {
-  const check = v9s.between(0, 100, 'Unexpected volume').check;
+  const check = simplify(v9s<string>().between(0, 100, 'Unexpected volume'));
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe('Unexpected volume');
@@ -9,7 +9,7 @@ test('Simple volume tuner validation (between)', () => {
 });
 
 test('Simple volume tuner validation (gte and lte', () => {
-  const check = v9s.lte(100, 'The volume is too loud').gte(0, 'The volume cannot be less than the silence').check;
+  const check = simplify(v9s<string>().lte(100, 'The volume is too loud').gte(0, 'The volume cannot be less than the silence'));
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe('The volume is too loud');
@@ -17,7 +17,7 @@ test('Simple volume tuner validation (gte and lte', () => {
 });
 
 test('Simple volume tuner validation (gt and lt)', () => {
-  const check = v9s.lt(101, 'The volume is too loud').gt(-1, 'The volume cannot be less than the silence').check;
+  const check = simplify(v9s<string>().lt(101, 'The volume is too loud').gt(-1, 'The volume cannot be less than the silence'));
 
   expect(check(10)).toBe(true);
   expect(check(120)).toBe('The volume is too loud');
@@ -26,14 +26,14 @@ test('Simple volume tuner validation (gt and lt)', () => {
 });
 
 test('Check the argument type to be a string', () => {
-  const check = v9s.string().check;
+  const check = simplify(v9s(false).string());
 
   expect(check('string argument')).toBe(true);
   expect(check(1)).toBe(false);
 });
 
 test('Check the argument type to be a number', () => {
-  const check = v9s.number().check;
+  const check = simplify(v9s(false).number());
 
   expect(check('string argument')).toBe(false);
   expect(check({})).toBe(false);
@@ -43,7 +43,7 @@ test('Check the argument type to be a number', () => {
 });
 
 test('Check the argument type to be a boolean', () => {
-  const check = v9s.boolean().check;
+  const check = simplify(v9s(false).boolean());
 
   expect(check(true)).toBe(true);
   expect(check(false)).toBe(true);
@@ -53,7 +53,7 @@ test('Check the argument type to be a boolean', () => {
 });
 
 test('Make sure the argument type is object', () => {
-  const check = v9s.object().check;
+  const check = simplify(v9s(false).object());
 
   class testClass {}
 
@@ -65,7 +65,7 @@ test('Make sure the argument type is object', () => {
 });
 
 test('Make sure the argument is null', () => {
-  const check = v9s.null().check;
+  const check = simplify(v9s(false).null());
 
   expect(check(null)).toBe(true);
   expect(check({})).toBe(false);
@@ -73,7 +73,7 @@ test('Make sure the argument is null', () => {
 });
 
 test('Make sure the argument is defined', () => {
-  const check = v9s.defined().check;
+  const check = simplify(v9s(false).defined());
 
   expect(check(undefined)).toBe(false);
   expect(check(0)).toBe(true);
@@ -82,7 +82,7 @@ test('Make sure the argument is defined', () => {
 });
 
 test('Make sure the argument is not defined', () => {
-  const check = v9s.notDefined().check;
+  const check = simplify(v9s(false).notDefined());
 
   expect(check(undefined)).toBe(true);
   expect(check(0)).toBe(false);
@@ -91,7 +91,7 @@ test('Make sure the argument is not defined', () => {
 });
 
 test('Make sure the argument is none (null or undefined)', () => {
-  const check = v9s.none().check;
+  const check = simplify(v9s(false).none());
 
   expect(check(undefined)).toBe(true);
   expect(check(null)).toBe(true);
@@ -100,7 +100,7 @@ test('Make sure the argument is none (null or undefined)', () => {
 });
 
 test('Make sure the argument is not null or undefined', () => {
-  const check = v9s.notNone().check;
+  const check = simplify(v9s(false).notNone());
 
   expect(check(undefined)).toBe(false);
   expect(check(null)).toBe(false);
@@ -109,13 +109,13 @@ test('Make sure the argument is not null or undefined', () => {
 });
 
 test('Make sure the argument is equal to the reference', () => {
-  const check = v9s.eq(24).check;
+  const check = simplify(v9s(false).eq(24));
 
   expect(check(24)).toBe(true);
   expect(check(42)).toBe(false);
   expect(check('24')).toBe(false);
 
-  const stringCheck = v9s.eq('str').check;
+  const stringCheck = simplify(v9s(false).eq('str'));
 
   expect(stringCheck('str')).toBe(true);
   expect(stringCheck('string')).toBe(false);
@@ -123,13 +123,13 @@ test('Make sure the argument is equal to the reference', () => {
 });
 
 test("Make sure the argument isn't equal to the reference", () => {
-  const check = v9s.ne(42).check;
+  const check = simplify(v9s(false).ne(42));
 
   expect(check(24)).toBe(true);
   expect(check(42)).toBe(false);
   expect(check('24')).toBe(true);
 
-  const stringCheck = v9s.ne('string').check;
+  const stringCheck = simplify(v9s(false).ne('string'));
 
   expect(stringCheck('str')).toBe(true);
   expect(stringCheck('string')).toBe(false);
@@ -137,7 +137,7 @@ test("Make sure the argument isn't equal to the reference", () => {
 });
 
 test('Validate minimum and maximum string length (minLength and maxLength)', () => {
-  const check = v9s.maxLength(10, 'too long').minLength(5, 'too short').check;
+  const check = simplify(v9s<string>().maxLength(10, 'too long').minLength(5, 'too short'));
 
   expect(check('halo')).toBe('too short');
   expect(check('validations')).toBe('too long');
@@ -148,7 +148,7 @@ test('Validate minimum and maximum string length (minLength and maxLength)', () 
 });
 
 test('Validate minimum and maximum string length (lengthBetween', () => {
-  const check = v9s.lengthBetween(5, 10).check;
+  const check = simplify(v9s(false).lengthBetween(5, 10));
 
   expect(check('halo')).toBe(false);
   expect(check('validations')).toBe(false);
@@ -159,7 +159,7 @@ test('Validate minimum and maximum string length (lengthBetween', () => {
 });
 
 test('Validate the strict length of a string', () => {
-  const check = v9s.strictLength(2).check;
+  const check = simplify(v9s(false).strictLength(2));
 
   expect(check('')).toBe(false);
   expect(check('validations')).toBe(false);

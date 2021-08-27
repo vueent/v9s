@@ -2,15 +2,15 @@
 
 ## Простой пример
 
-v9s создает цепочку правил. Вы можете интегрировать собственные правила в цепочку при помощи метода `use` или внедрить расширения при помощи метода `inject`. Для валидации значение вызовите метод `check`.
+v9s создает цепочку правил. Исполнение цепочки начинается с конца и заканчивается в начале цепочки (см. примеры ниже). Вы можете интегрировать собственные правила в цепочку при помощи метода `use`. Для валидации значение вызовите метод `check`.
 
-Простой пример:
+Просто пример:
 
 ```ts
 import v9s from 'v9s';
 
 // создаем экземпляр валидатора с правилами
-const validator = v9s(false).lte(100).gte(10);
+const validator = v9s.lte(100).gte(10);
 
 const small = validator.check(1); // проверяем маленькое значение
 
@@ -25,40 +25,15 @@ const normal = validator.check(50); // проверяем нормальное �
 console.log(normal); // true
 ```
 
-Как видите, если ошибок нет, то будет возвращено `undefined`.
-
 ## Сообщения об ошибках
 
-Когда вы импортируете библиотеку - вы импортируете функцию `def`, которая устанавливает тип для сообщений об ошибках и опциональное значение ошибки по умолчанию. По умолчанию метод `check` возвращает `T | undefined`, где `T` - тип значения сообщения об ошибке. Для того, чтобы использовать строковые сообщения об ошибках, просто установите типом сообщения (`T`) `string`.
-
-Пример:
+Часто необходимо добавить текст сообщения вместо результата в виде `true` или `false`. Легко, просто добавим второй строковый параметр во встроенное правило или метод `use`. Давайте перепишем предыдущий пример:
 
 ```ts
 import v9s from 'v9s';
 
 // создаем экземпляр валидатора с правилами и сообщениями об ошибках.
-const validator = v9s<string>('invalid value').lte(100).gte(10);
-
-const small = validator.check(1); // проверяем маленькое значение
-
-console.log(small); // 'invalid value'
-
-const big = validator.check(110); // проверяем большое значение
-
-console.log(big); // 'invalid value'
-
-const normal = validator.check(50); // проверяем нормальное значение
-
-console.log(normal); // undefined
-```
-
-Давайте перепишем предыдущий пример так, чтобы он получать разные сообщения для каждого из правил:
-
-```ts
-import v9s from 'v9s';
-
-// создаем экземпляр валидатора с правилами и сообщениями об ошибках.
-const validator = v9s<string>().lte(100, 'too big').gte(10, 'too small');
+const validator = v9s.lte(100, 'too big').gte(10, 'too small');
 
 const small = validator.check(1); // проверяем маленькое значение
 
@@ -70,27 +45,10 @@ console.log(big); // 'too big'
 
 const normal = validator.check(50); // проверяем нормальное значение
 
-console.log(normal); // undefined
+console.log(normal); // true
 ```
 
-::: danger ПРЕДУПРЕЖДЕНИЕ
-Если значение сообщения об ошибке по умолчанию не задано и не задано сообщение об ошибке для какого либо правила в цепочке - будет выброшено исключение.
-:::
-
-```ts
-import v9s from 'v9s';
-
-// create a validator instance with rules.
-const validator = v9s<string>().lte(100).gte(10);
-
-const normal = validator.check(50); // проверяем нормальное значение
-
-console.log(normal); // undefined
-
-const small = validator.check(1); // Уппс! Error('Undefined default negative value')
-```
-
-Если вам нужно использовать другой формат сообщения - задайте его тип:
+Если вам нужно использовать другой формат сообщения - задайте его тип (кроме `boolean` или `Function`):
 
 ```ts
 import v9s from 'v9s';
@@ -100,45 +58,17 @@ enum ValidationError {
   tooBig
 }
 
-const validator = v9s.lte<ValidationError>(100, ValidationError.tooBig).gte(10, ValidationError.tooSmall);
+const validator = v9s.lte<ValidationError>(100, tooBig).gte(10, tooSmall);
 
-const small = validator.check(1); // проверяем маленькое значение
+const small = validator.check(1); // check small value
 
 console.log(small); // 0
 
-const big = validator.check(110); // проверяем большое значение
+const big = validator.check(110); // check big value
 
 console.log(big); // 1
 
-const normal = validator.check(50); // проверяем нормальное значение
-
-console.log(normal); // undefined
-```
-
-## Упрощение результата
-
-Порой достаточно получить булево значение без других специальных типов или `undefined` в качестве результата. Для таких целей библиотека предоставляет специальную обертку экземпляра валидатора. Функция `simplify` возвращает функцию с сигнатурой, соответствующей сигнатуре метода `check`:
-
-```ts
-type CheckFunc<T> = (value: any, context: any) => T | undefined;
-```
-
-Пример:
-
-```ts
-import v9s, { simplify } from 'v9s';
-
-const check = simplify(v9s(false).lte(100).gte(10));
-
-const small = check(1); // проверяем маленькое значение
-
-console.log(small); // false
-
-const big = check(110); // проверяем большое значение
-
-console.log(big); // false
-
-const normal = check(50); // проверяем нормальное значение
+const normal = validator.check(50); // check normal value
 
 console.log(normal); // true
 ```
@@ -151,7 +81,7 @@ console.log(normal); // true
 import v9s from 'v9s';
 
 // создаем экземпляр валидатора с сортированной цепочкой правил и сообщениями об ошибках.
-const validator = v9s<string>().gte(10, 'very small').gte(100, 'small');
+const validator = v9s.gte(100, 'small').gte(10, 'very small');
 
 const verySmall = validator.check(9); // проверяем очень маленькое значение
 
@@ -163,22 +93,22 @@ console.log(small); // 'small'
 
 const normal = validator.check(110); // проверяем нормальное значение
 
-console.log(normal); // undefined
+console.log(normal); // true
 ```
 
 ## Инверсия
 
-Иногда нужно инвертировать результат работы правила. Это легко делается при помощи метода `not`:
+Иногда нужно инвертировать результат работы правила. Легко! Встречайте метод `not`:
 
 ```ts
 import v9s from 'v9s';
 
 // создадим экземпляр валидатора с инвертированным правилом
-const validator = v9s(false).not().string();
+const validator = v9s.not().string();
 
 const isNumber = validator.check(42); // проверяем число
 
-console.log(isNumber); // undefined
+console.log(isNumber); // true
 
 const isString = validator.check('42'); // проверяем строку
 
@@ -187,12 +117,12 @@ console..log(isString); // false (не строка)
 
 ## Модификатор опциональности
 
-Также можно разрешить `undefined` значения:
+В противном случае можно разрешить `undefined` значения:
 
 ```ts
 import v9s from 'v9s';
 
-const validator = v9s(false).string().optional();
+const validator = v9s.string().optional();
 
 const isNumber = validator.check(42); // проверяем число
 
@@ -200,25 +130,23 @@ console.log(isNumber); // false
 
 const isString = validator.check('42'); // проверяем строку
 
-console.log(isString); // undefined
+console.log(isString); // true
 
 const isNotDefined = validator.check(undefined); // проверяем undefined
 
-console.log(isNotDefined); // undefined
+console.log(isNotDefined); // true
 ```
 
-::: warning ПРЕДУПРЕЖДЕНИЕ
 Модификатор `optional` применяется только к конкретному правилу, следующее правило его игнорирует.
-:::
 
 ## Композиция
 
 Когда необходимо добавить альтернативное условие - самое время использовать метод `or`:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import v9s from 'v9s';
 
-const check = simplify(v9s(false).string().optional().or(v9s(false).number()));
+const validator = v9s.string().optional().or(v9s.number());
 
 const isString = validator.check('42');
 
@@ -246,9 +174,9 @@ console.log(isNull); // false, потому что null !== undefined и мож�
 ```js
 import v9s from 'v9s';
 
-const check = v9s(false).string().optional().or(v9s(false).number()).check;
+const check = v9s.string().optional().or(v9s.number()).check;
 
-console.log(check('42')); // undefined
+console.log(check('42')); // true
 ```
 
 ## Внешние правила
@@ -262,10 +190,10 @@ type Rule = (value: any, context: any) => boolean;
 Давайте создадим собственное правило, которое проверяет, является ли строковое значение целым числом.
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import v9s from 'v9s';
 
 const integer = (value: string) => /^[0-9]+$/.test(value); // проверяем целочисленную строку
-const check = simplify(v9s(false).use(integer));
+const check = v9s.use(integer).check;
 
 console.log(check('42')); // true
 console.log(check('42a')); // false
@@ -276,11 +204,11 @@ console.log(check('42a')); // false
 Хорошо, мы уверены, что наше значение является целочисленной строкой. Теперь добавим диапазон допустимых значений и преобразуем значение в тип `number` при помощи `Modifier`:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import v9s from 'v9s';
 
 const integer = (value: string) => /^[0-9]+$/.test(value);
 const modify = (value: string) => Number(value); // пробразование сроки в число
-const check = simplify(v9s(false).use(integer, undefined, modify).between(10, 100));
+const check = v9s.between(10, 100).use(integer, undefined, modify).check;
 
 console.log(check('42')); // true
 console.log(check('9')); // false
@@ -292,40 +220,6 @@ console.log(check('110')); // false
 ```ts
 type Modifier = (value: any, context: any) => any;
 ```
-
-## Инъекции
-
-В отличие от внешних правил, инъекции позволяют указать другую цепочку через экземпляр валидатора или функцию с сигнатурой, аналогичной сигнатуре метода `check`. Эта цепочка будет проверяться перед основной. Например, напишем примитивную инъекцию `each`:
-
-```ts
-import v9s, { CheckFunc, Message, MessageFactory, Validator } from 'v9s';
-
-function each<T>(chain: CheckFunc<T> | Validator<T>, message: Message<T>): CheckFunc<T> {
-  return (value: any, context: any = {}) => {
-    const getMessage = () => (typeof message === 'function' ? (message as MessageFactory<T>)() : message);
-    const check = typeof chain === 'function' ? chain : chain.check;
-
-    if (!Array.isArray(value)) return getMessage();
-    else
-      return value.reduce<T | undefined>((prev, current) => (prev === undefined ? check(current, context) : prev), undefined);
-  };
-}
-
-const check = v9s<string>().inject(
-  each(v9s<string>().number('not a number').gte(2, 'too small').lte(10, 'too big'), 'not array')
-).check;
-
-console.log(check('[1, 2, 3]')); // 'not array'
-console.log(check(['1', '2', '3'])); // 'not a number'
-console.log(check([1, 2, 3, 11])); // 'too small'
-console.log(check([2, 3, 11])); // 'too big'
-console.log(check([2, 3])); // undefined
-}
-```
-
-::: tip ПРИМЕЧАНИЕ
-Проверка полных схем не является целью v9s, но, как видите, это возможно.
-:::
 
 ## Интернационализация
 
@@ -353,9 +247,9 @@ const errorMessageFactory = () => {
   }
 };
 
-const check = v9s<string>().between(10, 100, errorMessageFactory).check;
+const check = v9s.between(10, 100, errorMessageFactory).check;
 
-console.log(check(50)); // undefined
+console.log(check(50)); // true
 console.log(check(110)); // 'Invalid value'
 
 lang = Lang.de;
@@ -367,70 +261,12 @@ lang = Lang.ru;
 console.log(check(110)); // 'Неверное значение'
 ```
 
-::: tip ПРИМЕЧАНИЕ
-Если вам нужно получать функции как сообщения об ошибках, задайте сообщения через фабрики: `() => errorMessageFunction`.
-:::
-
-## Возврат объекта
-
-В некоторых случаях вы можете захотеть получить объект с полем, отражающим состояние, вместо чистого результата или `undefined`. Обертка `objectify` заставляет цепочку возвращать экземпляр следующего класса:
-
-```ts
-/**
- * Успешный или неудачный результат валидации.
- */
-export class ValidationResult<T> {
-  /**
-   * Сообщение об ошибке.
-   */
-  public readonly error?: T;
-
-  /**
-   * Состояние результата валидации.
-   */
-  public readonly success: boolean;
-
-  constructor(error?: T) {
-    this.error = error;
-    this.success = error === undefined;
-  }
-}
-```
-
-Пример:
-
-```ts
-import v9s, { objectify } from 'v9s';
-
-const check = objectify(v9s('invalid').number('not a number').gte(10).lte(100));
-
-const isString = check('42');
-
-console.log(isString.success); // false
-console.log(isString.error); // 'not a number'
-
-const tooSmall = check(5);
-
-console.log(tooSmall.success); // false
-console.log(tooSmall.error); // 'invalid'
-
-const tooBig = check(110);
-
-console.log(tooBig.success); // false
-console.log(tooBig.error); // 'invalid'
-
-const normal = check(50);
-
-console.log(normal.success); // true
-console.log(normal.error); // undefined
-```
-
 ## Контекст
 
 Вы видели параметр `context` в предыдущих примерах. Это объект (по умолчанию: `{}`), который перемещается между правилами в цепочке и позволяет обмениваться данными между ними. Контекст может содержать промежуточные вычисления, другие поля субъекта и так далее. В следующем примере промежуточные вычисления перемещаются между правилами:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import v9s from 'v9s';
 
 const checkForDuplicates = function (value: number[], context: { sorted?: number[] }) {
   const sorted = value.slice().sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
@@ -454,9 +290,7 @@ const checkMaximum = function (maximum: number, value: number[], context: { sort
   return sorted.length > 0 && maximum >= sorted[sorted.length - 1];
 };
 
-const check = simplify(
-  v9s(false).use(checkForDuplicates).use(checkMinimum.bind(undefined, 10)).use(checkMaximum.bind(undefined, 100))
-);
+const check = v9s.use(checkMaximum.bind(undefined, 100)).use(checkMinimum.bind(undefined, 10)).use(checkForDuplicates).check;
 
 console.log(check([])); // false - пустой
 console.log(check([1, 6, 4, 2, 1])); // false - дубликаты `1`
@@ -468,7 +302,7 @@ console.log(check([10, 60, 40, 20])); // true
 Еще один вариант применения контекста - условная проверка с привязкой к другим полям объекта. Поля `value` и `name` интерфейса имеют значение только тогда, когда оба не пусты. В следующем примере аргумент контекста вручную передается в функцию `check`.
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import v9s from 'v9s';
 
 interface Data {
   name: string;
@@ -483,8 +317,8 @@ const checkValueRule = function (value: string, context: Data) {
   return (!value && !context.name) || /^[0-9]+$/.test(value);
 };
 
-const checkName = simplify(v9s(false).use(checkNameRule));
-const checkValue = simplify(v9s(false).use(checkValueRule));
+const checkName = v9s.use(checkNameRule).check;
+const checkValue = v9s.use(checkValueRule).check;
 
 const empty = { name: '', value: '' };
 
