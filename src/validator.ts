@@ -67,7 +67,7 @@ export class Validator<T = boolean> {
   /**
    * An injected rule/subchain which have to be checked before the current chain.
    */
-  protected _injection?: CheckFunc<T>;
+  protected _injection?: CheckFunc<T> | Validator<T>;
 
   /**
    * @param defaultNegative - will be used as a fail result if the message is not set
@@ -389,7 +389,7 @@ export class Validator<T = boolean> {
     return this;
   }
 
-  public inject(injection: CheckFunc<T>): Validator<T> {
+  public inject(injection: CheckFunc<T> | Validator<T>): Validator<T> {
     this._injection = injection;
 
     return this;
@@ -404,7 +404,8 @@ export class Validator<T = boolean> {
    */
   protected verify(value: any, context: any): T | undefined {
     if (this._injection) {
-      const subresult = this._injection(value, context);
+      const subresult =
+        typeof this._injection === 'function' ? this._injection(value, context) : this._injection.check(value, context);
 
       if (subresult !== undefined) return subresult;
     }

@@ -171,3 +171,12 @@ test('True as error', () => {
   expect(check(true)).toBe(true);
   expect(check(false)).toBe(true);
 });
+
+test('Inject another chain', () => {
+  const injection = v9s.def<string>().number('not a number');
+  const check = v9s.def<string>().gte(10, 'less than 10').inject(injection).check;
+
+  expect(check(true)).toBe('not a number');
+  expect(check(5)).toBe('less than 10');
+  expect(check(10)).toBe(undefined);
+});
