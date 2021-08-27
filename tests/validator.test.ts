@@ -155,3 +155,19 @@ test('Undefined default value', () => {
     expect(e).toStrictEqual(new Error('Undefined default negative value'));
   }
 });
+
+test('Null as error', () => {
+  const check = v9s.def(null).number().check;
+
+  expect(check(1)).toBe(undefined);
+  expect(check('1')).toBe(null);
+});
+
+test('True as error', () => {
+  const check = v9s.def(true).number().check;
+
+  expect(check(1)).toBe(undefined);
+  expect(check('1')).toBe(true);
+  expect(check(true)).toBe(true);
+  expect(check(false)).toBe(true);
+});

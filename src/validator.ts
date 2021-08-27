@@ -111,9 +111,7 @@ export class Validator<T = boolean> {
   public check(value: any, context: any = {}): T | undefined {
     if (this._rootCheck) return this._rootCheck(value, context);
 
-    const response = this.verify(value, context);
-
-    return response === true ? undefined : response;
+    return this.verify(value, context);
   }
 
   /**
@@ -404,34 +402,28 @@ export class Validator<T = boolean> {
    * @param context - context object
    * @returns - checking result
    */
-  protected verify(value: any, context: any): true | T {
+  protected verify(value: any, context: any): T | undefined {
     if (this._injection) {
       const subresult = this._injection(value, context);
 
       if (subresult !== undefined) return subresult;
     }
 
-    if (!this._rule) {
-      const error = this._next?.verify(this._modifier(value, context), context);
-
-      return error === undefined ? true : error;
-    }
+    if (!this._rule) return this._next?.verify(this._modifier(value, context), context);
 
     const optional = !this._strict && value === undefined;
     let result = optional || this._rule(value, context);
 
     if (this._inverse && !optional) result = !result;
 
-    let response: true | T;
+    let response: T | undefined;
 
     if (!result && this._another) {
-      const checkResult =
+      response =
         typeof this._another === 'function'
           ? this._another(this._modifier(value, context), context)
           : this._another.check(this._modifier(value, context), context);
-
-      response = checkResult === undefined ? true : checkResult;
-    } else if (result) response = true;
+    } else if (result) response = undefined;
     else {
       const message = typeof this._message === 'function' ? (this._message as MessageFactory<T>)() : this._message;
 
