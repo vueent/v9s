@@ -1,5 +1,4 @@
 import * as rules from './rules';
-import ValidationResult from './validation-result';
 
 export type Rule = (value: any, context: any) => boolean;
 
@@ -9,7 +8,7 @@ export type Message<T = boolean> = T | MessageFactory<T>;
 
 export type Modifier = (value: any, context: any) => any;
 
-export type CheckFunc<T> = (value: any, context: any) => ValidationResult<T>;
+export type CheckFunc<T> = (value: any, context: any) => T | undefined;
 
 /**
  * This class provides a single link of the chain.
@@ -109,12 +108,12 @@ export class Validator<T = boolean> {
    * @param context - context object
    * @returns - checking result
    */
-  public check(value: any, context: any = {}): ValidationResult<T> {
+  public check(value: any, context: any = {}): T | undefined {
     if (this._rootCheck) return this._rootCheck(value, context);
 
     const response = this.verify(value, context);
 
-    return response === true ? ValidationResult.passed<T>() : response;
+    return response === true ? undefined : response;
   }
 
   /**
@@ -405,21 +404,25 @@ export class Validator<T = boolean> {
    * @param context - context object
    * @returns - checking result
    */
-  protected verify(value: any, context: any): true | ValidationResult<T> {
+  protected verify(value: any, context: any): true | T {
     if (this._injection) {
       const subresult = this._injection(value, context);
 
-      if (subresult.error !== undefined) return subresult;
+      if (subresult !== undefined) return subresult;
     }
 
-    if (!this._rule) return this._next?.verify(this._modifier(value, context), context) ?? true;
+    if (!this._rule) {
+      const error = this._next?.verify(this._modifier(value, context), context);
+
+      return error === undefined ? true : error;
+    }
 
     const optional = !this._strict && value === undefined;
     let result = optional || this._rule(value, context);
 
     if (this._inverse && !optional) result = !result;
 
-    let response: true | ValidationResult<T>;
+    let response: true | T;
 
     if (!result && this._another) {
       const checkResult =
@@ -427,17 +430,21 @@ export class Validator<T = boolean> {
           ? this._another(this._modifier(value, context), context)
           : this._another.check(this._modifier(value, context), context);
 
-      response = checkResult.success ? true : checkResult;
+      response = checkResult === undefined ? true : checkResult;
     } else if (result) response = true;
     else {
       const message = typeof this._message === 'function' ? (this._message as MessageFactory<T>)() : this._message;
 
-      if (message !== undefined) response = ValidationResult.failed<T>(message);
+      if (message !== undefined) response = message;
       else if (this._defaultNegative === undefined) throw new Error('Undefined default negative value');
-      else response = ValidationResult.failed<T>(this._defaultNegative);
+      else response = this._defaultNegative;
     }
 
-    return result ? this._next?.verify(this._modifier(value, context), context) ?? response : response;
+    if (result) {
+      const error = this._next?.verify(this._modifier(value, context), context);
+
+      return error === undefined ? response : error;
+    } else return response;
   }
 }
 

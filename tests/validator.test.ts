@@ -1,4 +1,4 @@
-import v9s, { CheckFunc, ValidationResult, simplify, Message, MessageFactory } from '@/index';
+import v9s, { CheckFunc, simplify, Message, MessageFactory } from '@/index';
 
 test('Use an external validation function', () => {
   const min = function (minimum: number, value: string) {
@@ -105,11 +105,11 @@ test('Combined not, or and optional methods usage', () => {
 test('A generic message type using', () => {
   const check = v9s.def<number>().boolean(0).check;
 
-  expect(check('true').error).toBe(0);
+  expect(check('true')).toBe(0);
 
   const checkFactory = v9s.def<number>().boolean(() => 0).check;
 
-  expect(checkFactory('true').error).toBe(0);
+  expect(checkFactory('true')).toBe(0);
 
   interface MyError {
     code: number;
@@ -118,8 +118,8 @@ test('A generic message type using', () => {
 
   const check2 = v9s.def<MyError>({ code: 0, text: 'Unexpected' }).boolean({ code: 1, text: 'Not boolean' }).check;
 
-  expect(check2(true).success).toBe(true);
-  expect(check2('true').error).toStrictEqual({ code: 1, text: 'Not boolean' });
+  expect(check2(true)).toBe(undefined);
+  expect(check2('true')).toStrictEqual({ code: 1, text: 'Not boolean' });
 });
 
 test('Injections using', () => {
@@ -127,15 +127,15 @@ test('Injections using', () => {
     return (value: any, context: any = {}) => {
       const getMessage = () => (typeof message === 'function' ? (message as MessageFactory<T>)() : message);
 
-      if (!Array.isArray(value)) return ValidationResult.failed<T>(getMessage());
+      if (!Array.isArray(value)) return getMessage();
       else {
         for (const v of value) {
-          const result = chain(v, context);
+          const error = chain(v, context);
 
-          if (!result.success) return result;
+          if (error !== undefined) return error;
         }
 
-        return ValidationResult.passed<T>();
+        return undefined;
       }
     };
   }

@@ -1,7 +1,6 @@
 import Validator from './validator';
 
 export { simplify } from './simplify';
-export { ValidationResult } from './validation-result';
 export { Rule, MessageFactory, Message, Modifier, CheckFunc, Validator } from './validator';
 
 export default {

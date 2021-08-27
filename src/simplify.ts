@@ -10,8 +10,8 @@ import Validator from './validator';
  */
 export function simplify<T>(v: Validator<T>): (value: any, context?: any) => true | T {
   return (value: any, context?: any) => {
-    const result = v.check(value, context);
+    const error = v.check(value, context);
 
-    return result.success ? true : (result.error as T);
+    return error === undefined ? true : error;
   };
 }
