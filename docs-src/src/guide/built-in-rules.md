@@ -11,9 +11,20 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).string());
+const check = simplify(v9s(false).string());
 
 console.log(check('42')); // true
+console.log(check(42)); // false
+```
+
+or
+
+```ts
+import v9s from 'v9s';
+
+const check = v9s(false).string().check;
+
+console.log(check('42')); // undefined
 console.log(check(42)); // false
 ```
 
@@ -26,7 +37,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).number().check);
+const check = simplify(v9s(false).number().check);
 
 console.log(check(42)); // true
 console.log(check('42')); // false
@@ -41,7 +52,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).boolean().check);
+const check = simplify(v9s(false).boolean().check);
 
 console.log(check(true)); // true
 console.log(check(42)); // false
@@ -56,7 +67,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).object().check);
+const check = simplify(v9s(false).object().check);
 
 console.log(check({})); // true
 console.log(check(null)); // false
@@ -72,7 +83,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).null().check);
+const check = simplify(v9s(false).null().check);
 
 console.log(check(null)); // true
 console.log(check({})); // false
@@ -88,7 +99,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).defined().check);
+const check = simplify(v9s(false).defined().check);
 
 console.log(check(42)); // true
 console.log(check(null)); // true
@@ -104,7 +115,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).notDefined().check);
+const check = simplify(v9s(false).notDefined().check);
 
 console.log(check(undefined)); // true
 console.log(check(42)); // false
@@ -120,7 +131,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).none().check);
+const check = simplify(v9s(false).none().check);
 
 console.log(check(undefined)); // true
 console.log(check(null)); // true
@@ -136,7 +147,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).none().check);
+const check = simplify(v9s(false).none().check);
 
 console.log(check(42)); // true
 console.log(check(undefined)); // false
@@ -152,7 +163,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).eq(42).check);
+const check = simplify(v9s(false).eq(42).check);
 
 console.log(check(42)); // true
 console.log(check(43)); // false
@@ -168,7 +179,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).ne(42).check);
+const check = simplify(v9s(false).ne(42).check);
 
 console.log(check(43)); // true
 console.log(check('42')); // true
@@ -184,7 +195,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).gt(42).check);
+const check = simplify(v9s(false).gt(42).check);
 
 console.log(check(43)); // true
 console.log(check(42)); // false
@@ -199,7 +210,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).gte(42).check);
+const check = simplify(v9s(false).gte(42).check);
 
 console.log(check(43)); // true
 console.log(check(42)); // true
@@ -215,7 +226,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).lt(42).check);
+const check = simplify(v9s(false).lt(42).check);
 
 console.log(check(41)); // true
 console.log(check(42)); // false
@@ -230,7 +241,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).lte(42).check);
+const check = simplify(v9s(false).lte(42).check);
 
 console.log(check(41)); // true
 console.log(check(42)); // true
@@ -246,7 +257,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).between(10, 100).check);
+const check = simplify(v9s(false).between(10, 100).check);
 
 console.log(check(10)); // true
 console.log(check(50)); // true
@@ -263,7 +274,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).minLength(5).check);
+const check = simplify(v9s(false).minLength(5).check);
 
 console.log(check('halo')); // false
 console.log(check('hello')); // true
@@ -280,7 +291,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).minLength(5).check);
+const check = simplify(v9s(false).minLength(5).check);
 
 console.log(check('halo')); // true
 console.log(check('hello')); // true
@@ -297,7 +308,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).strictLength(5).check);
+const check = simplify(v9s(false).strictLength(5).check);
 
 console.log(check('halo')); // false
 console.log(check('hello')); // true
@@ -314,7 +325,7 @@ Example:
 ```ts
 import v9s, { simplify } from 'v9s';
 
-const check = simplify(v9s.def(false).lengthBetween(5, 12).check);
+const check = simplify(v9s(false).lengthBetween(5, 12).check);
 
 console.log(check('halo')); // false
 console.log(check('hello')); // true

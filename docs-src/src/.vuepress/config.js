@@ -58,7 +58,7 @@ module.exports = {
             {
               title: 'Guide',
               collapsable: true,
-              children: ['', 'tutorial', 'built-in-rules']
+              children: ['', 'migration-guide', 'tutorial', 'built-in-rules']
             }
           ]
         }
@@ -88,7 +88,7 @@ module.exports = {
             {
               title: 'Руководство',
               collapsable: true,
-              children: ['', 'tutorial', 'built-in-rules']
+              children: ['', 'migration-guide', 'tutorial', 'built-in-rules']
             }
           ]
         }
