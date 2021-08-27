@@ -396,7 +396,7 @@ export class Validator<T = boolean> {
   }
 
   /**
-   * Verifies a value and returns an instance of {@link ValidationResult} with an error or `true`.
+   * Verifies a value and returns an error message or `undefined`.
    *
    * @param value - checked value
    * @param context - context object
