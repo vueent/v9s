@@ -100,7 +100,7 @@ enum ValidationError {
   tooBig
 }
 
-const validator = v9s<ValidationError>().lte(100, tooBig).gte(10, tooSmall);
+const validator = v9s<ValidationError>().lte(100, ValidationError.tooBig).gte(10, ValidationError.tooSmall);
 
 const small = validator.check(1); // check small value
 
