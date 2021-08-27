@@ -34,6 +34,9 @@ When you import the library you import the `def` function which sets up a type o
 Example:
 
 ```ts
+import v9s from 'v9s';
+
+// create a validator instance with rules and error messages.
 const validator = v9s<string>('invalid value').lte(100).gte(10);
 
 const small = validator.check(1); // check small value
@@ -71,13 +74,13 @@ console.log(normal); // undefined
 ```
 
 ::: danger
-If no default error message is specified and no error message is specified for any rule in the chain too, an `Error('Undefined default negative value')` will be thrown.
+If no default error message is specified and no error message is specified for some rule in the chain too, an `Error('Undefined default negative value')` exception will be thrown.
 :::
 
 ```ts
 import v9s from 'v9s';
 
-// create a validator instance with rules and error messages.
+// create a validator instance with rules.
 const validator = v9s<string>().lte(100).gte(10);
 
 const normal = validator.check(50); // check normal value
@@ -114,7 +117,7 @@ console.log(normal); // undefined
 
 ## Simplifier
 
-Sometimes it is enough to get a `true/false` result without other special types or `undefined`. The library provides a function that wraps a validator instance for this. The `simplify` function returns a function with a signature similar to the signature of the `check` method:
+Sometimes it is enough to get a boolean result without other special types or `undefined`. The library provides a function that wraps a validator instance for this. The `simplify` function returns a function with a signature similar to the signature of the `check` method:
 
 ```ts
 type CheckFunc<T> = (value: any, context: any) => T | undefined;
