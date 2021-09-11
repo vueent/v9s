@@ -10,15 +10,26 @@
   "bugs": {
     "url": "https://github.com/vueent/v9s/issues"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "type": "module",
+  "main": "lib/index.mjs",
+  "types": "lib/index.d.ts",
   "files": [
     "lib",
     "src"
   ],
+  "jsdelivr": "lib/index.iife.js",
+  "unpkg": "lib/index.iife.js",
+  "module": "lib/index.mjs",
+  "exports": {
+    ".": {
+      "require": "./lib/index.cjs",
+      "import": "./lib/index.mjs",
+      "browser": "./lib/index.mjs"
+    },
+    "./*": "./*"
+  },
   "scripts": {
-    "build": "rimraf ./lib ./v9scjs && rollup --config rollup.config.js && node --experimental-json-modules post-build-cjs && cp -R src/ v9scjs/",
+    "build": "rimraf ./lib && rollup --config rollup.config.js",
     "test": "npm run test:clear && npm run test:unit",
     "test:clear": "jest --clearCache",
     "test:unit": "jest",

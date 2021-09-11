@@ -34,7 +34,7 @@ console.log(normal); // true
 <code-block title="JS CommonJS">
 
 ```js
-const v9s = require('v9scjs').def; // или require('v9scjs').default;
+const { v9s } = require('v9s');
 
 // создаем экземпляр валидатора с правилами.
 const validator = v9s(false).lte(100).gte(10);

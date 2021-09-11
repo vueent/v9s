@@ -67,16 +67,6 @@ So, our goal is a small and flexible library without external dependencies that 
 npm install v9s
 ```
 
-or (for [CommonJS](https://nodejs.org/docs/latest/api/modules.html#modules_modules_commonjs_modules))
-
-```sh
-npm install v9scjs
-```
-
-**TIP**
-
-_v2.0.1+_: If you use CommonJS modules, install `v9scjs` instead of `v9s`.
-
 ## Migration
 
 There are some breaking changes between v1 and v2 of v9s. First of all, the chain execution direction was changed to the human friendly _left-to-right_. Second, the default library export (`default export`) became a function which specifies a type of error messages and the optional default error message. Third, `check` method returns `T | undefined` (here `T` - the error message type) instead of `T | boolean`.
@@ -200,7 +190,7 @@ console.log(normal); // undefined
 CommonJS (JavaScript):
 
 ```js
-const v9s = require('v9scjs').def; // or require('v9scjs').default;
+const { v9s } = require('v9s');
 
 // create a validator instance with rules.
 const validator = v9s(false).lte(100).gte(10);

@@ -25,9 +25,6 @@ pnpm-debug.log*
 /docs
 /docs-src
 
-# CommonJS build
-/v9scjs
-
 # dev configs
 .editorconfig
 .eslintignore

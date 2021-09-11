@@ -4,14 +4,21 @@ export default {
   input: 'src/index.ts',
   output: [
     {
-      file: 'lib/index.js',
+      file: 'lib/index.mjs',
       format: 'es',
       sourcemap: true
     },
     {
-      file: 'v9scjs/lib/index.js',
+      file: 'lib/index.cjs',
       format: 'cjs',
       sourcemap: true,
+      exports: 'named'
+    },
+    {
+      file: 'lib/index.iife.js',
+      format: 'iife',
+      sourcemap: true,
+      name: 'v9s',
       exports: 'named'
     }
   ],
