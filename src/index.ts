@@ -9,8 +9,8 @@ export { Rule, MessageFactory, Message, Modifier, CheckFunc, Validator } from '.
  * @param defaultNegative - default negative value
  * @returns - `Validator` instance
  */
-export function def<T = boolean>(defaultNegative?: T) {
+export function v9s<T = boolean>(defaultNegative?: T) {
   return new Validator<T>(defaultNegative);
 }
 
-export default def;
+export default v9s;
