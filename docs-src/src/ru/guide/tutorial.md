@@ -6,10 +6,14 @@ v9s создает цепочку правил. Вы можете интегри
 
 Простой пример:
 
+<code-group>
+
+<code-block title="TS ES Module">
+
 ```ts
 import v9s from 'v9s';
 
-// создаем экземпляр валидатора с правилами
+// создаем экземпляр валидатора с правилами.
 const validator = v9s(false).lte(100).gte(10);
 
 const small = validator.check(1); // проверяем маленькое значение
@@ -24,6 +28,32 @@ const normal = validator.check(50); // проверяем нормальное �
 
 console.log(normal); // true
 ```
+
+</code-block>
+
+<code-block title="JS CommonJS">
+
+```js
+const v9s = require('v9scjs').def; // или require('v9scjs').default;
+
+// создаем экземпляр валидатора с правилами.
+const validator = v9s(false).lte(100).gte(10);
+
+const small = validator.check(1); // проверяем маленькое значение
+
+console.log(small); // false
+
+const big = validator.check(110); // проверяем большое значение
+
+console.log(big); // false
+
+const normal = validator.check(50); // проверяем нормальное значение
+
+console.log(normal); // undefined
+```
+
+</code-block>
+</code-group>
 
 Как видите, если ошибок нет, то будет возвращено `undefined`.
 
