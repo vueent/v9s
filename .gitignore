@@ -13,21 +13,23 @@ node_modules/
 # src
 docs-src/
 lib/
+v9scjs/
 src/
 tests/
 README.md
 tsconfig.json
 tsconfig.bundle.json
-rollup.config.mjs
+rollup.config.js
 package.json
 package-lock.json
-lint-staged.config.js
-jest.config.mjs
+.lintstagedrc.json
+jest.config.js
 .travis.yml
 .npmignore
-.huskyrc.js
-.eslintrc.js
+.huskyrc.json
+.eslintrc.cjs
 .eslintignore
+post-build-cjs.js
 
 # Log files
 npm-debug.log*
