@@ -14,8 +14,10 @@
   "files": [
     "lib"
   ],
+  "types": "lib/index.d.ts",
+  "type": "module",
   "scripts": {
-    "build": "rimraf ./lib && rollup --config rollup.config.mjs",
+    "build": "rimraf ./lib && rollup --config rollup.config.js",
     "test": "npm run test:clear && npm run test:unit",
     "test:clear": "jest --clearCache",
     "test:unit": "jest",
