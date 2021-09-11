@@ -13,7 +13,6 @@ node_modules/
 # src
 docs-src/
 lib/
-v9scjs/
 src/
 tests/
 README.md
@@ -29,7 +28,6 @@ jest.config.js
 .huskyrc.json
 .eslintrc.cjs
 .eslintignore
-post-build-cjs.js
 
 # Log files
 npm-debug.log*
@@ -39,5 +37,4 @@ pnpm-debug.log*
 
 # tests
 /coverage
-/packages/*/coverage
 
