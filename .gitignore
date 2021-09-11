@@ -14,6 +14,7 @@ node_modules/
 docs/
 docs-src/dist
 lib/
+v9scjs/
 
 # Log files
 npm-debug.log*
