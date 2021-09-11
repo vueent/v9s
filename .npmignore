@@ -25,13 +25,18 @@ pnpm-debug.log*
 /docs
 /docs-src
 
+# CommonJS build
+/v9scjs
+
 # dev configs
 .editorconfig
 .eslintignore
-.eslintrc.js
-.huskyrc.js
+.eslintrc.cjs
+.huskyrc.json
+.lintstagedrc.json
 .prettierignore
 .prettierrc
-jest.config.mjs
-lint-staged.config.js
-rollup.config.mjs
+.travis.yml
+post-build-cjs.js
+jest.config.js
+rollup.config.js

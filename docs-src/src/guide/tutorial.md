@@ -6,6 +6,9 @@
 
 Easy example:
 
+<code-group>
+<code-block title="TS ES Module">
+
 ```ts
 import v9s from 'v9s';
 
@@ -24,6 +27,32 @@ const normal = validator.check(50); // check normal value
 
 console.log(normal); // undefined
 ```
+
+</code-block>
+
+<code-block title="JS CommonJS">
+
+```js
+const v9s = require('v9scjs').def; // or require('v9scjs').default;
+
+// create a validator instance with rules.
+const validator = v9s(false).lte(100).gte(10);
+
+const small = validator.check(1); // check small value
+
+console.log(small); // false
+
+const big = validator.check(110); // check big value
+
+console.log(big); // false
+
+const normal = validator.check(50); // check normal value
+
+console.log(normal); // undefined
+```
+
+</code-block>
+</code-group>
 
 As you can see, if there are no errors, the `undefined` value will be returned.
 

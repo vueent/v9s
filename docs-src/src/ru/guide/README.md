@@ -13,19 +13,39 @@ _v9s_ означает _validations_ (валидации). Это небольш
 ## Установка
 
 <code-group>
-<code-block title="NPM" active>
+<code-block title="NPM ES Module" active>
 
 ```bash
-npm install --save-dev v9s
+npm install v9s
 ```
 
 </code-block>
 
-<code-block title="YARN">
+<code-block title="YARN ES Module">
 
 ```bash
-yarn add --dev v9s
+yarn add v9s
+```
+
+</code-block>
+
+<code-block title="NPM CommonJS">
+
+```bash
+npm install v9scjs
+```
+
+</code-block>
+
+<code-block title="YARN CommonJS">
+
+```bash
+yarn add v9scjs
 ```
 
 </code-block>
 </code-group>
+
+::: tip ПРИМЕЧАНИЕ
+_v2.0.1+_: Если вы используете модули CommonJS, устанавливайте `v9scjs` вместо `v9s`.
+:::
