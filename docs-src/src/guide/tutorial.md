@@ -33,7 +33,7 @@ console.log(normal); // undefined
 <code-block title="JS CommonJS">
 
 ```js
-const v9s = require('v9scjs').def; // or require('v9scjs').default;
+const { v9s } = require('v9s');
 
 // create a validator instance with rules.
 const validator = v9s(false).lte(100).gte(10);
