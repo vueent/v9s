@@ -1,4 +1,4 @@
-import v9s, { simplify } from '@/index';
+import { v9s, simplify } from '@/index';
 
 test('Simple volume tuner validation (between)', () => {
   const check = simplify(v9s<string>().between(0, 100, 'Unexpected volume'));
