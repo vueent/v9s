@@ -440,5 +440,3 @@ export class Validator<T = boolean> {
     } else return response;
   }
 }
-
-export default Validator;
