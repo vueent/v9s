@@ -1,4 +1,4 @@
-import v9s, { simplify } from '@/index';
+import { v9s, simplify } from '@/index';
 
 test('Migration example #1', () => {
   const check = v9s<string>().number('not a number').gte(10, 'too very small').gte(100, 'too small').check;

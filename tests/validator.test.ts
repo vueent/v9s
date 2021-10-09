@@ -1,4 +1,4 @@
-import v9s, { CheckFunc, simplify, Message, MessageFactory } from '@/index';
+import { v9s, CheckFunc, simplify, Message, MessageFactory } from '@/index';
 
 test('Use an external validation function', () => {
   const min = function (minimum: number, value: string) {

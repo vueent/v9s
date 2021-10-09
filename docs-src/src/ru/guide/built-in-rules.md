@@ -9,7 +9,7 @@
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).string().check);
 
@@ -20,7 +20,7 @@ console.log(check(42)); // false
 или
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 const check = v9s(false).string().check;
 
@@ -35,7 +35,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).number().check);
 
@@ -50,7 +50,7 @@ console.log(check('42')); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).boolean().check);
 
@@ -65,7 +65,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).object().check);
 
@@ -81,7 +81,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).null().check);
 
@@ -97,7 +97,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).defined().check);
 
@@ -113,7 +113,7 @@ console.log(check(undefined)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).notDefined().check);
 
@@ -129,7 +129,7 @@ console.log(check(null)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).none().check);
 
@@ -145,7 +145,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).none().check);
 
@@ -161,7 +161,7 @@ console.log(check(null)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).eq(42).check);
 
@@ -177,7 +177,7 @@ console.log(check('42')); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).ne(42).check);
 
@@ -193,7 +193,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).gt(42).check);
 
@@ -208,7 +208,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).gte(42).check);
 
@@ -224,7 +224,7 @@ console.log(check(41)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lt(42).check);
 
@@ -239,7 +239,7 @@ console.log(check(42)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lte(42).check);
 
@@ -255,7 +255,7 @@ console.log(check(43)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).between(10, 100).check);
 
@@ -272,7 +272,7 @@ console.log(check(101)); // false
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).minLength(5).check);
 
@@ -289,7 +289,7 @@ console.log(check([0, 1, 2, 3, 4])); // true
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).minLength(5).check);
 
@@ -306,7 +306,7 @@ console.log(check([0, 1, 2, 3, 4])); // true
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).strictLength(5).check);
 
@@ -323,7 +323,7 @@ console.log(check([0, 1, 2, 3, 4])); // true
 Пример:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lengthBetween(5, 12).check);
 

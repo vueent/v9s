@@ -9,7 +9,7 @@ The `string()` method applies a built-in rule that verifies a value if the value
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).string());
 
@@ -20,7 +20,7 @@ console.log(check(42)); // false
 or
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 const check = v9s(false).string().check;
 
@@ -35,7 +35,7 @@ The `number()` method applies a built-in rule that verifies a value if the value
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).number().check);
 
@@ -50,7 +50,7 @@ The `boolean()` method applies a built-in rule that verifies a value if the valu
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).boolean().check);
 
@@ -65,7 +65,7 @@ The `object()` method applies a built-in rule that verifies a value if the value
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).object().check);
 
@@ -81,7 +81,7 @@ The `null()` method applies a built-in rule that verifies a value if the value i
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).null().check);
 
@@ -97,7 +97,7 @@ The `defined()` method applies a built-in rule that verifies a value if the valu
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).defined().check);
 
@@ -113,7 +113,7 @@ The `notDefined()` method applies a built-in rule that verifies a value if the v
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).notDefined().check);
 
@@ -129,7 +129,7 @@ The `none()` method applies a built-in rule that verifies a value if the value i
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).none().check);
 
@@ -145,7 +145,7 @@ The `notNone()` method applies a built-in rule that verifies a value if the valu
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).none().check);
 
@@ -161,7 +161,7 @@ The `eq()` method applies a built-in rule that verifies a value if the value is 
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).eq(42).check);
 
@@ -177,7 +177,7 @@ The `ne()` method applies a built-in rule that verifies a value if the value is 
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).ne(42).check);
 
@@ -193,7 +193,7 @@ The `gt()` method applies a built-in rule that verifies a value if the value is 
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).gt(42).check);
 
@@ -208,7 +208,7 @@ The `gte()` method applies a built-in rule that verifies a value if the value is
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).gte(42).check);
 
@@ -224,7 +224,7 @@ The `lt()` method applies a built-in rule that verifies a value if the value is 
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lt(42).check);
 
@@ -239,7 +239,7 @@ The `lte()` method applies a built-in rule that verifies a value if the value is
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lte(42).check);
 
@@ -255,7 +255,7 @@ The `between()` method applies a built-in rule that verifies a value if the valu
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).between(10, 100).check);
 
@@ -272,7 +272,7 @@ The `minLength()` method applies a built-in rule that verifies a value if the va
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).minLength(5).check);
 
@@ -289,7 +289,7 @@ The `maxLength()` method applies a built-in rule that verifies a value if the va
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).minLength(5).check);
 
@@ -306,7 +306,7 @@ The `strictLength()` method applies a built-in rule that verifies a value if the
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).strictLength(5).check);
 
@@ -323,7 +323,7 @@ The `lengthBetween()` method applies a built-in rule that verifies a value if th
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lengthBetween(5, 12).check);
 

@@ -1,4 +1,4 @@
-import Validator, { CheckFunc } from './validator';
+import { Validator, CheckFunc } from './validator';
 
 /**
  * Returns an error message or `true`.

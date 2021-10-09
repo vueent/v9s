@@ -1,4 +1,4 @@
-import v9s, { simplify, objectify, CheckFunc, Message, MessageFactory, Validator } from '@/index';
+import { v9s, simplify, objectify, CheckFunc, Message, MessageFactory, Validator } from '@/index';
 
 test('Example #1', () => {
   const check = simplify(v9s(false).lte(100).gte(10));
