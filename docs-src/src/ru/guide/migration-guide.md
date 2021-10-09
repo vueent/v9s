@@ -21,7 +21,7 @@ console.log(check(105)); // true
 <code-block title="V2">
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 const check = v9s<string>(/* default error message */)
   .number('not a number')
@@ -58,7 +58,7 @@ console.log(check(105)); // true
 <code-block title="V2">
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(
   v9s<string>(/* default error message */).number('not a number').gte(10, 'too very small').gte(100, 'too small')
@@ -94,7 +94,7 @@ console.log(check(50)); // true
 <code-block title="V2">
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).number().gte(10).lte(100));
 

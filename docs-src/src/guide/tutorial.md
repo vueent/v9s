@@ -10,7 +10,7 @@ Easy example:
 <code-block title="TS ES Module">
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 // create a validator instance with rules.
 const validator = v9s(false).lte(100).gte(10);
@@ -63,7 +63,7 @@ When you import the library you import the `def` function which sets up a type o
 Example:
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 // create a validator instance with rules and error messages.
 const validator = v9s<string>('invalid value').lte(100).gte(10);
@@ -84,7 +84,7 @@ console.log(normal); // undefined
 Let's rewrite the previous example to use different error messages for each rule:
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 // create a validator instance with rules and error messages.
 const validator = v9s<string>().lte(100, 'too big').gte(10, 'too small');
@@ -107,7 +107,7 @@ If no default error message is specified and no error message is specified for s
 :::
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 // create a validator instance with rules.
 const validator = v9s<string>().lte(100).gte(10);
@@ -122,7 +122,7 @@ const small = validator.check(1); // Ooops! Error('Undefined default negative va
 If you need to use an another message format - set the type:
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 enum ValidationError {
   tooSmall,
@@ -155,7 +155,7 @@ type CheckFunc<T> = (value: any, context: any) => T | undefined;
 Example:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).lte(100).gte(10));
 
@@ -177,7 +177,7 @@ console.log(normal); // true
 But what we have to do, if need to receive different error messages for the same rule with a number of thresholds? So, it's a time to remember a sequence of the chain execution.
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 // create a validator instance with a ordered chain of rules with error messages.
 const validator = v9s<string>().gte(10, 'very small').gte(100, 'small');
@@ -200,7 +200,7 @@ console.log(normal); // undefined
 Sometimes we want to inverse a result of a rule. Easy! Meet the `not` method:
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 // create a validation instance with an inversed rule.
 const validator = v9s(false).not().string();
@@ -219,7 +219,7 @@ console..log(isString); // false (not a string)
 Otherwise it is possible to allow `undefined` values:
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 const validator = v9s(false).string().optional();
 
@@ -245,7 +245,7 @@ The `optional` modifier applies only to the specified rule; the next rule ignore
 When it is necessary to add an alternative condition, it's time to use the `or` method:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const check = simplify(v9s(false).string().optional().or(v9s(false).number()));
 
@@ -273,7 +273,7 @@ console.log(isNull); // false, because null !== undefined and may be a legal val
 Usually it's not required to save a validator instance, just a check function:
 
 ```js
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 const check = v9s(false).string().optional().or(v9s(false).number()).check;
 
@@ -291,7 +291,7 @@ type Rule = (value: any, context: any) => boolean;
 Let's create our own rule which verifies that the string value is an integer number.
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const integer = (value: string) => /^[0-9]+$/.test(value); // verify an integer string
 const check = simplify(v9s(false).use(integer));
@@ -305,7 +305,7 @@ console.log(check('42a')); // false
 Okay, we are assured that our value is an integer string. Now add a range of valid values and convert the value to type `number` via `Modifier`:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const integer = (value: string) => /^[0-9]+$/.test(value);
 const modify = (value: string) => Number(value); // convert a string to a number
@@ -327,7 +327,7 @@ type Modifier = (value: any, context: any) => any;
 Unlike external rules, injections allows to specify an other chain via a validator instance or a function with a signature similar to the signature of the `check` method. That chain will be checked before the main chain. For example, let's write primitive `each` injection:
 
 ```ts
-import v9s, { CheckFunc, Message, MessageFactory, Validator } from 'v9s';
+import { v9s, CheckFunc, Message, MessageFactory, Validator } from 'v9s';
 
 function each<T>(chain: CheckFunc<T> | Validator<T>, message: Message<T>): CheckFunc<T> {
   return (value: any, context: any = {}) => {
@@ -361,7 +361,7 @@ Checking complete schemas isn't the goal of v9s, but as you can see it is possib
 Message factory functions can be used instead of string messages. That feature may be useful for internationalized applications.
 
 ```ts
-import v9s from 'v9s';
+import { v9s } from 'v9s';
 
 enum Lang {
   de,
@@ -429,7 +429,7 @@ export class ValidationResult<T> {
 Example:
 
 ```ts
-import v9s, { objectify } from 'v9s';
+import { v9s, objectify } from 'v9s';
 
 const check = objectify(v9s('invalid').number('not a number').gte(10).lte(100));
 
@@ -459,7 +459,7 @@ console.log(normal.error); // undefined
 You've seen a `context` parameter in the previous examples. This is an object (by default: `{}`) that moves between rules in the chain and allows communication between them. It may contain an intermediate calculations, other subject fields and so on. In the following example the intermediate calculations are moved between rules:
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 const checkForDuplicates = function (value: number[], context: { sorted?: number[] }) {
   const sorted = value.slice().sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
@@ -497,7 +497,7 @@ console.log(check([10, 60, 40, 20])); // true
 Yet another way to use a context is a conditional check according to other fields of the object. `value` and `name` fields of the interface do matter only when all of them are not empty. In the following example the context argument is manually sent to the `check` function.
 
 ```ts
-import v9s, { simplify } from 'v9s';
+import { v9s, simplify } from 'v9s';
 
 interface Data {
   name: string;
