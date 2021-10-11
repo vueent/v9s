@@ -51,7 +51,8 @@ This is a README of 2.x follow the documentation pages to see [1.x](https://vuee
    18. [maxLength](#maxLength)
    19. [strictLength](#strictLength)
    20. [lengthBetween](#lengthBetween)
-7. [License](#license)
+7. [Additionals](#additionals)
+8. [License](#license)
 
 ## Motivation
 
@@ -1018,6 +1019,10 @@ console.log(check('hello')); // true
 console.log(check('hello, world')); // true
 console.log(check([0, 1, 2, 3, 4])); // true
 ```
+
+## Additionals
+
+Load the [_v9sx_](https://github.com/vueent/v9sx) package to use additional rules, modifiers and injections.
 
 ## LICENSE
 

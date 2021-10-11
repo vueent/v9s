@@ -29,3 +29,7 @@ yarn add v9s
 
 </code-block>
 </code-group>
+
+## Additionals
+
+Load the [_v9sx_](https://github.com/vueent/v9sx) package to use additional rules, modifiers and injections.
